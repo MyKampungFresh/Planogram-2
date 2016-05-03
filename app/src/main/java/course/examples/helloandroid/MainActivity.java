@@ -37,7 +37,7 @@ public class MainActivity extends Activity {
             btnExp.setText(text);
         }
 
-        FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.layoutBarcode);
+        FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
         DrawBarcode dv = new DrawBarcode(this);
         frameBarcode.addView(dv);
     }
