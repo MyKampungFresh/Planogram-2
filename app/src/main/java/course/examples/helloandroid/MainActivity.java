@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -40,6 +41,19 @@ public class MainActivity extends Activity {
         FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
         DrawBarcode dv = new DrawBarcode(this);
         frameBarcode.addView(dv);
+
+        final View workView = findViewById(R.id.workView);
+        workView.setOnTouchListener(new OnSwipeTouchListener(this) {
+            @Override
+            public void onSwipeLeft() {
+                nextProduct(workView);
+            }
+
+            @Override
+            public void onSwipeRight() {
+                prevProduct(workView);
+            }
+        });
     }
 
     @Override
@@ -86,6 +100,5 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(MainActivity.this, setExpirationActivity.class);
         MainActivity.this.startActivity(intent);
     }
-
 
 }

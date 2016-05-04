@@ -9,7 +9,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity"
-    android:weightSum="1">
+    android:weightSum="1"
+    android:id="@+id/workView">
 
     <TextView
         android:layout_width="wrap_content"
@@ -81,28 +82,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.74" />
+        android:layout_weight="0.20"
+        android:id="@+id/emptySpace" />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="&lt;"
-            android:id="@+id/prevProd"
-            android:layout_gravity="left|center_vertical"
-            android:onClick="prevProduct" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=">"
-            android:id="@+id/nextProd"
-            android:layout_gravity="right|center_vertical"
-            android:onClick="nextProduct" />
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.17">
 
         <TextView
             android:layout_width="wrap_content"
