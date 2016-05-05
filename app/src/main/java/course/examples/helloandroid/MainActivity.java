@@ -6,7 +6,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -26,27 +25,7 @@ public class MainActivity extends Activity {
 
         res = getResources();
 
-        // Draw barcode
-        FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
-        DrawBarcode dv = new DrawBarcode(this);
-        frameBarcode.addView(dv);
-
-        // Show barcode data
-        TextView UPC = (TextView)findViewById(R.id.UPC);
-        String txtUPC = res.getString(R.string.upc, "799366629702");
-        UPC.setText(txtUPC);
-
-        // Expiration
-        Button btnExp = (Button)findViewById(R.id.btnExpiration);
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String date = extras.getString("date");
-            int nbExp = extras.getInt("nbExp");
-            int nbTotal = extras.getInt("nbTotal");
-
-            String text = res.getString(R.string.setExpiration, nbExp, nbTotal, date);
-            btnExp.setText(text);
-        }
+        refreshView();
 
         // Swipe gesture
         final View workView = findViewById(R.id.workView);
@@ -90,7 +69,52 @@ public class MainActivity extends Activity {
         MainActivity.this.startActivity(intent);
     }
 
-    private void refreshFields(){
+    private void refreshView(){
+
+        // Description
+        TextView prodDesc = (TextView)findViewById(R.id.prodDescription);
+        String txtProdDesc = res.getString(R.string.desc, "JAMIESON MULTI COMPL.VIT.ADLT");
+        prodDesc.setText(txtProdDesc);
+
+        // Format
+        TextView prodFormat = (TextView)findViewById(R.id.prodFormat);
+        String txtProdFormat = res.getString(R.string.format, "1 X 90 CAPL");
+        prodFormat.setText(txtProdFormat);
+
+        // Draw barcode
+        FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
+        DrawBarcode dv = new DrawBarcode(this);
+        frameBarcode.addView(dv);
+
+        // Show barcode data
+        TextView UPC = (TextView)findViewById(R.id.UPC);
+        String txtUPC = res.getString(R.string.upc, "799366629702");
+        UPC.setText(txtUPC);
+
+        // Facing
+        TextView nbFacing = (TextView)findViewById(R.id.nbFacing);
+        String txtNbFacing = res.getString(R.string.nbFacing, 1);
+        nbFacing.setText(txtNbFacing);
+
+        // Expiration
+        Button btnExp = (Button)findViewById(R.id.btnExpiration);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String date = extras.getString("date");
+            int nbExp = extras.getInt("nbExp");
+            int nbTotal = extras.getInt("nbTotal");
+
+            String text = res.getString(R.string.setExpiration, nbExp, nbTotal, date);
+            btnExp.setText(text);
+        }
+
+        // Loc
+        String txtLoc = res.getString(R.string.setLoc, loc, totalNbProd);
+        ((TextView)findViewById(R.id.loc)).setText(txtLoc);
+
+        // Shelf height
+        String txtShelfHeight = res.getString(R.string.shelfHeight, 7);
+        ((TextView)findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
 
     }
 
