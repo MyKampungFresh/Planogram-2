@@ -26,8 +26,18 @@ public class MainActivity extends Activity {
 
         res = getResources();
 
-        Button btnExp = (Button)findViewById(R.id.btnExpiration);
+        // Draw barcode
+        FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
+        DrawBarcode dv = new DrawBarcode(this);
+        frameBarcode.addView(dv);
 
+        // Show barcode data
+        TextView UPC = (TextView)findViewById(R.id.UPC);
+        String txtUPC = res.getString(R.string.upc, "799366629702");
+        UPC.setText(txtUPC);
+
+        // Expiration
+        Button btnExp = (Button)findViewById(R.id.btnExpiration);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String date = extras.getString("date");
@@ -38,10 +48,7 @@ public class MainActivity extends Activity {
             btnExp.setText(text);
         }
 
-        FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
-        DrawBarcode dv = new DrawBarcode(this);
-        frameBarcode.addView(dv);
-
+        // Swipe gesture
         final View workView = findViewById(R.id.workView);
         workView.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
@@ -78,7 +85,16 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void nextProduct(View v) {
+    public void setExpiration(View v) {
+        Intent intent = new Intent(MainActivity.this, setExpirationActivity.class);
+        MainActivity.this.startActivity(intent);
+    }
+
+    private void refreshFields(){
+
+    }
+
+    private void nextProduct(View v) {
 
         if(loc < totalNbProd)
             loc++;
@@ -87,18 +103,13 @@ public class MainActivity extends Activity {
         ((TextView)findViewById(R.id.loc)).setText(text);
     }
 
-    public void prevProduct(View v) {
+    private void prevProduct(View v) {
 
         if(loc > 1)
             loc = loc - 1;
 
         String text = res.getString(R.string.setLoc, loc, totalNbProd);
         ((TextView)findViewById(R.id.loc)).setText(text);
-    }
-
-    public void setExpiration(View v) {
-        Intent intent = new Intent(MainActivity.this, setExpirationActivity.class);
-        MainActivity.this.startActivity(intent);
     }
 
 }

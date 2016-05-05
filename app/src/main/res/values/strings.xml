@@ -4,7 +4,7 @@
     <string name="action_settings">Settings</string>
     <string name="value">Value</string>
     <string name="idNumber">Id Number</string>
-    <string name="upc">064642078728</string>
+    <string name="upc">%1$s</string>
     <string name="setLoc">%1$d/%2$d</string>>
     <string name="format">1 X 90 CAPL</string>
     <string name="nbFacing">1</string>
