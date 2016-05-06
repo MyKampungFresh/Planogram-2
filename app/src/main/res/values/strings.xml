@@ -20,5 +20,7 @@
     <string name="nb_in_total">Nb in total</string>
     <string name="nb_expiring">Nb expiring</string>
     <string name="month">Month</string>
-    <string name="expValidityNotice">Expiration is not valid</string>>
+    <string name="expValidityNotice">Expiration is not valid</string>
+    <string name="open_planogram">Open planogram</string>
+    <string name="continue_planogram">Continue planogram</string>>
 </resources>

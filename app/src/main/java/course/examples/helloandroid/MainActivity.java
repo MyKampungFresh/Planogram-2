@@ -69,6 +69,11 @@ public class MainActivity extends Activity {
         MainActivity.this.startActivity(intent);
     }
 
+    public void openPlano(View v) {
+        Intent intent = new Intent(MainActivity.this, OpenFile.class);
+        MainActivity.this.startActivity(intent);
+    }
+
     private void refreshView(){
 
         // Description

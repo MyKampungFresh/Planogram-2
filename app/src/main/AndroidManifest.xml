@@ -9,7 +9,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".setExpirationActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".StartActivity"
             android:label="Planogram">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,7 +17,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".openPlano"></activity>
+        <activity android:name=".OpenFile" />
+        <activity android:name=".MainActivity"></activity>
     </application>
 
 </manifest>
