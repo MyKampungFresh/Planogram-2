@@ -22,11 +22,11 @@ public class DrawBarcode extends View {
     private static int[] upceNbSys1Enc = {7,11,13,14,19,25,28,21,22,26};
     private static int[] eanParity = {0,11,13,14,19,25,28,21,22,26};
 
-    float startXPix = 10;
-    float topYPix = 5;
+    float startXPix = 0;
+    float topYPix = 0;
     float bottomYPix;
-    float minSize = 65;
-    float scaling = 3;
+    float minSize = 400;
+    float scaling = 5;
 
     String encoding;
     String code;

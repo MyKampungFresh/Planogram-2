@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -112,6 +113,8 @@ public class MainActivity extends Activity {
             String text = res.getString(R.string.setExpiration, nbExp, nbTotal, date);
             btnExp.setText(text);
         }
+        else
+            btnExp.setText("");
 
         // Loc
         String txtLoc = res.getString(R.string.setLoc, loc, totalNbProd);

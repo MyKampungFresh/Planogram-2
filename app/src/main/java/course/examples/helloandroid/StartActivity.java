@@ -18,4 +18,8 @@ public class StartActivity extends Activity {
         Intent intent = new Intent(StartActivity.this, OpenFile.class);
         StartActivity.this.startActivity(intent);
     }
+
+    public void continuePlano(View v) {
+
+    }
 }
