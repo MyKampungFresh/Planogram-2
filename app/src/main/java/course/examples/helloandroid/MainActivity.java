@@ -9,24 +9,41 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.File;
 
 public class MainActivity extends Activity {
 
     private int loc = 1;
-    private int totalNbProd = 88;
+    private int totalNbProd = 0;
 
     private Resources res;
+
+    private Planogram plano;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        String fileName;
+        String shortFileName;
+
         res = getResources();
 
-        refreshView();
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            fileName = extras.getString("fileName");
+            shortFileName = extras.getString("shortFileName");
+
+            if(shortFileName != null) {
+                File pdfFile = new File(fileName);
+                plano = new Planogram(pdfFile);
+
+                refreshView();
+            }
+        }
 
         // Swipe gesture
         final View workView = findViewById(R.id.workView);
@@ -70,59 +87,75 @@ public class MainActivity extends Activity {
         MainActivity.this.startActivity(intent);
     }
 
-    public void openPlano(View v) {
-        Intent intent = new Intent(MainActivity.this, OpenFile.class);
-        MainActivity.this.startActivity(intent);
-    }
-
     private void refreshView(){
 
-        // Description
-        TextView prodDesc = (TextView)findViewById(R.id.prodDescription);
-        String txtProdDesc = res.getString(R.string.desc, "JAMIESON MULTI COMPL.VIT.ADLT");
-        prodDesc.setText(txtProdDesc);
+        int nbExp = 0;
+        int nbTotal = 0;
+        String date = null;
+        String expCode;
 
-        // Format
-        TextView prodFormat = (TextView)findViewById(R.id.prodFormat);
-        String txtProdFormat = res.getString(R.string.format, "1 X 90 CAPL");
-        prodFormat.setText(txtProdFormat);
+        String txtProdDesc;
+        String txtProdFormat;
+        String txtUPC;
+        String txtNbFacing;
+        String txtLoc;
+        String txtShelfHeight;
 
-        // Draw barcode
-        FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
-        DrawBarcode dv = new DrawBarcode(this);
-        frameBarcode.addView(dv);
+        Product currentProd;
 
-        // Show barcode data
-        TextView UPC = (TextView)findViewById(R.id.UPC);
-        String txtUPC = res.getString(R.string.upc, "799366629702");
-        UPC.setText(txtUPC);
-
-        // Facing
-        TextView nbFacing = (TextView)findViewById(R.id.nbFacing);
-        String txtNbFacing = res.getString(R.string.nbFacing, 1);
-        nbFacing.setText(txtNbFacing);
-
-        // Expiration
-        Button btnExp = (Button)findViewById(R.id.btnExpiration);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String date = extras.getString("date");
-            int nbExp = extras.getInt("nbExp");
-            int nbTotal = extras.getInt("nbTotal");
-
-            String text = res.getString(R.string.setExpiration, nbExp, nbTotal, date);
-            btnExp.setText(text);
+            date = extras.getString("date");
+            nbExp = extras.getInt("nbExp");
+            nbTotal = extras.getInt("nbTotal");
+            expCode = extras.getString("expCode");
         }
-        else
-            btnExp.setText("");
 
-        // Loc
-        String txtLoc = res.getString(R.string.setLoc, loc, totalNbProd);
-        ((TextView)findViewById(R.id.loc)).setText(txtLoc);
+            currentProd = plano.getProduct(loc);
 
-        // Shelf height
-        String txtShelfHeight = res.getString(R.string.shelfHeight, 7);
-        ((TextView)findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
+            totalNbProd = plano.getNbProducts();
+
+            // Description
+            TextView prodDesc = (TextView) findViewById(R.id.prodDescription);
+            txtProdDesc = res.getString(R.string.desc, currentProd.getDesc());
+            prodDesc.setText(txtProdDesc);
+
+            // Format
+            TextView prodFormat = (TextView) findViewById(R.id.prodFormat);
+            txtProdFormat = res.getString(R.string.format, currentProd.getFormat());
+            prodFormat.setText(txtProdFormat);
+
+            // Draw barcode
+            FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
+            DrawBarcode dv = new DrawBarcode(this);
+            frameBarcode.addView(dv);
+
+            // Show barcode data
+            TextView UPC = (TextView) findViewById(R.id.UPC);
+            txtUPC = res.getString(R.string.upc, currentProd.getUpc());
+            UPC.setText(txtUPC);
+
+            // Facing
+            TextView nbFacing = (TextView) findViewById(R.id.nbFacing);
+            txtNbFacing = res.getString(R.string.nbFacing, currentProd.getNbFacing());
+            nbFacing.setText(txtNbFacing);
+
+            // Expiration
+            Button btnExp = (Button) findViewById(R.id.btnExpiration);
+            if (date != null) {
+                String text = res.getString(R.string.setExpiration, nbExp, nbTotal, date);
+                btnExp.setText(text);
+
+                //plano.setExpirationAtPos(loc,);
+            }
+
+            // Loc
+            txtLoc = res.getString(R.string.setLoc, loc, totalNbProd);
+            ((TextView) findViewById(R.id.loc)).setText(txtLoc);
+
+            // Shelf height
+            txtShelfHeight = res.getString(R.string.shelfHeight, currentProd.getShelfHeight());
+            ((TextView) findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
 
     }
 
@@ -131,8 +164,7 @@ public class MainActivity extends Activity {
         if(loc < totalNbProd)
             loc++;
 
-        String text = res.getString(R.string.setLoc, loc, totalNbProd);
-        ((TextView)findViewById(R.id.loc)).setText(text);
+        refreshView();
     }
 
     private void prevProduct(View v) {
@@ -140,8 +172,7 @@ public class MainActivity extends Activity {
         if(loc > 1)
             loc = loc - 1;
 
-        String text = res.getString(R.string.setLoc, loc, totalNbProd);
-        ((TextView)findViewById(R.id.loc)).setText(text);
+        refreshView();
     }
 
 }

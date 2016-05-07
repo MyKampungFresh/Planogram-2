@@ -135,7 +135,7 @@ public class OpenFile extends Activity
             case R.id.BtnOK:
 
                 intent = new Intent(OpenFile.this, MainActivity.class);
-                intent.putExtra("fileName", selectedFilePath+Environment.getExternalStorageDirectory().getAbsolutePath());
+                intent.putExtra("fileName", selectedFilePath);
                 intent.putExtra("shortFileName", selectedFileName);
                 setResult(RESULT_OK, intent);
 

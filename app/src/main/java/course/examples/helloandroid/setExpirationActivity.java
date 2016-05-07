@@ -32,10 +32,13 @@ public class setExpirationActivity extends Activity {
             intent.putExtra("date",exp.getDateStr());
             intent.putExtra("nbExp",exp.getNbExpiring());
             intent.putExtra("nbTotal",exp.getNbTotal());
+            intent.putExtra("expCode",expCode);
 
             expValidityNotice.setEnabled(false);
 
             setExpirationActivity.this.startActivity(intent);
+
+            this.finish();
         }
         else {
             expValidityNotice.setEnabled(true);
@@ -46,5 +49,7 @@ public class setExpirationActivity extends Activity {
     public void pressCancelBtn(View v) {
         Intent intent = new Intent(setExpirationActivity.this, MainActivity.class);
         setExpirationActivity.this.startActivity(intent);
+
+        this.finish();
     }
 }
