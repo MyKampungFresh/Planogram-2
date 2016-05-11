@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.view.View;
 
 import java.util.Arrays;
@@ -26,7 +27,7 @@ public class Barcode extends View {
     float topYPix = 0;
     float bottomYPix;
     float minSize = 400;
-    float scaling = 5;
+    float scaling = 4;
 
     String encoding;
     String code;
@@ -38,6 +39,8 @@ public class Barcode extends View {
         paint.setColor(Color.BLACK);
         paint.setAntiAlias(true);
 
+        this.code = code;
+
         bcData = new BarcodeData(code);
     }
 
@@ -46,7 +49,7 @@ public class Barcode extends View {
         int[] bcDigits = bcData.getCodeDigits();
 
         encodeUPCA(bcDigits);
-        drawBars(canvas);
+       drawBars(canvas);
     }
 
     private void encodeUPCA(int[] bcDigits){
@@ -118,7 +121,9 @@ public class Barcode extends View {
 
         bottomYPix = topYPix + minSize;
 
-        paint.setStrokeWidth(1.25F * scaling);
+        paint.setStrokeWidth(scaling);
+
+        canvas.drawColor(Color.WHITE);
 
         for(int i = 0; i < encoding.length(); i++)
         {

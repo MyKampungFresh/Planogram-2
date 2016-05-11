@@ -1,6 +1,7 @@
 package course.examples.helloandroid;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -22,6 +23,10 @@ public class MainActivity extends Activity {
 
     private Planogram plano;
 
+    File pdfFile = null;
+
+    ProgressDialog progress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,16 +37,34 @@ public class MainActivity extends Activity {
 
         res = getResources();
 
+        progress = ProgressDialog.show(this, "dialog title",
+                "dialog message", true);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             fileName = extras.getString("fileName");
             shortFileName = extras.getString("shortFileName");
 
             if(shortFileName != null) {
-                File pdfFile = new File(fileName);
-                plano = new Planogram(pdfFile);
+                pdfFile = new File(fileName);
 
-                refreshView();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run()
+                    {
+                        // do the thing that takes a long time
+                        plano = new Planogram(pdfFile);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run()
+                            {
+                                progress.dismiss();
+                                refreshView();
+                            }
+                        });
+                    }
+                }).start();
             }
         }
 
@@ -127,9 +150,9 @@ public class MainActivity extends Activity {
         prodFormat.setText(txtProdFormat);
 
         // Draw barcode
-        /*FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
+        FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
         Barcode dv = new Barcode(this,currentProd.getUpc());
-        frameBarcode.addView(dv);*/
+        frameBarcode.addView(dv);
 
         // Show barcode data
         TextView UPC = (TextView) findViewById(R.id.UPC);

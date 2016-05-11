@@ -40,13 +40,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.20" />
+        android:layout_weight="0.10" />
 
     <FrameLayout
-        android:layout_width="150dp"
-        android:layout_height="100dp"
+        android:layout_width="200dp"
+        android:layout_height="125dp"
         android:layout_gravity="center_horizontal"
-        android:id="@+id/frameBarcode"></FrameLayout>
+        android:id="@+id/frameBarcode"
+        android:minWidth="200dp"></FrameLayout>
 
     <TextView
         android:layout_width="wrap_content"

@@ -226,4 +226,17 @@ public class OpenFile extends Activity
                 break;
         }
     }
+
+    private boolean checkPermission(){
+        int result = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (result == PackageManager.PERMISSION_GRANTED){
+
+            return true;
+
+        } else {
+
+            return false;
+
+        }
+    }
 }
