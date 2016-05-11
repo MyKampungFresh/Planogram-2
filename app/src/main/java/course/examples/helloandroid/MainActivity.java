@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
         int nbExp = 0;
         int nbTotal = 0;
         String date = null;
-        String expCode;
+        String expCode = null;
 
         String txtProdDesc;
         String txtProdFormat;
@@ -101,6 +101,7 @@ public class MainActivity extends Activity {
         String txtLoc;
         String txtShelfHeight;
 
+        Expiration exp;
         Product currentProd;
 
         Bundle extras = getIntent().getExtras();
@@ -111,51 +112,54 @@ public class MainActivity extends Activity {
             expCode = extras.getString("expCode");
         }
 
-            currentProd = plano.getProduct(loc);
+        currentProd = plano.getProduct(loc);
 
-            totalNbProd = plano.getNbProducts();
+        totalNbProd = plano.getNbProducts();
 
-            // Description
-            TextView prodDesc = (TextView) findViewById(R.id.prodDescription);
-            txtProdDesc = res.getString(R.string.desc, currentProd.getDesc());
-            prodDesc.setText(txtProdDesc);
+        // Description
+        TextView prodDesc = (TextView) findViewById(R.id.prodDescription);
+        txtProdDesc = res.getString(R.string.desc, currentProd.getDesc());
+        prodDesc.setText(txtProdDesc);
 
-            // Format
-            TextView prodFormat = (TextView) findViewById(R.id.prodFormat);
-            txtProdFormat = res.getString(R.string.format, currentProd.getFormat());
-            prodFormat.setText(txtProdFormat);
+        // Format
+        TextView prodFormat = (TextView) findViewById(R.id.prodFormat);
+        txtProdFormat = res.getString(R.string.format, currentProd.getFormat());
+        prodFormat.setText(txtProdFormat);
 
-            // Draw barcode
-            FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
-            DrawBarcode dv = new DrawBarcode(this);
-            frameBarcode.addView(dv);
+        // Draw barcode
+        /*FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
+        Barcode dv = new Barcode(this,currentProd.getUpc());
+        frameBarcode.addView(dv);*/
 
-            // Show barcode data
-            TextView UPC = (TextView) findViewById(R.id.UPC);
-            txtUPC = res.getString(R.string.upc, currentProd.getUpc());
-            UPC.setText(txtUPC);
+        // Show barcode data
+        TextView UPC = (TextView) findViewById(R.id.UPC);
+        txtUPC = res.getString(R.string.upc, currentProd.getUpc());
+        UPC.setText(txtUPC);
 
-            // Facing
-            TextView nbFacing = (TextView) findViewById(R.id.nbFacing);
-            txtNbFacing = res.getString(R.string.nbFacing, currentProd.getNbFacing());
-            nbFacing.setText(txtNbFacing);
+        // Facing
+        TextView nbFacing = (TextView) findViewById(R.id.nbFacing);
+        txtNbFacing = res.getString(R.string.nbFacing, currentProd.getNbFacing());
+        nbFacing.setText(txtNbFacing);
 
-            // Expiration
-            Button btnExp = (Button) findViewById(R.id.btnExpiration);
-            if (date != null) {
-                String text = res.getString(R.string.setExpiration, nbExp, nbTotal, date);
-                btnExp.setText(text);
+        // Expiration
+        Button btnExp = (Button) findViewById(R.id.btnExpiration);
+        if (date != null) {
+            String text = res.getString(R.string.setExpiration, nbExp, nbTotal, date);
+            btnExp.setText(text);
 
-                //plano.setExpirationAtPos(loc,);
-            }
+            // This is stupid
+            exp = new Expiration(expCode);
 
-            // Loc
-            txtLoc = res.getString(R.string.setLoc, loc, totalNbProd);
-            ((TextView) findViewById(R.id.loc)).setText(txtLoc);
+            plano.setExpirationAtPos(loc, exp);
+        }
 
-            // Shelf height
-            txtShelfHeight = res.getString(R.string.shelfHeight, currentProd.getShelfHeight());
-            ((TextView) findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
+        // Loc
+        txtLoc = res.getString(R.string.setLoc, loc, totalNbProd);
+        ((TextView) findViewById(R.id.loc)).setText(txtLoc);
+
+        // Shelf height
+        txtShelfHeight = res.getString(R.string.shelfHeight, currentProd.getShelfHeight());
+        ((TextView) findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
 
     }
 

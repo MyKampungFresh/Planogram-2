@@ -5,10 +5,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -41,10 +46,19 @@ public class OpenFile extends Activity
     String selectedFilePath = null; /* Full path, i.e. /mnt/sdcard/folder/file.txt */
     String selectedFileName = null; /* File Name Only, i.e file.txt */
 
+    private Context context;
+    private Activity activity;
+    private static final int PERMISSION_REQUEST_CODE = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open_plano);
+
+        context = getApplicationContext();
+        activity = this;
+
+        //requestPermission();
 
         try {
             /* Initializing Widgets */
@@ -59,7 +73,8 @@ public class OpenFile extends Activity
             BtnOK.setOnClickListener(this);
             BtnCancel.setOnClickListener(this);
 
-            setCurrentPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+            //setCurrentPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+            setCurrentPath("/");
 
         } catch (Exception ex) {
             Toast.makeText(this,
@@ -164,7 +179,16 @@ public class OpenFile extends Activity
                             long id) {
         String entryName = (String)parent.getItemAtPosition(position);
         if (entryName.endsWith("/")) {
-            setCurrentPath(currentPath + entryName);
+            int permissionCheck = ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE);
+            if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                requestPermission();
+            }
+            else {
+                setCurrentPath(currentPath + entryName);
+            }
+
+            //setCurrentPath(currentPath + entryName);
         } else {
             selectedFilePath = currentPath + entryName;
 
@@ -173,6 +197,33 @@ public class OpenFile extends Activity
             /*this.setTitle(this.getResources().getString(R.string.title_activity_open_file)
                     + "[" + entryName + "]");*/
             this.setTitle("Open planogram" + "[" + entryName + "]");
+        }
+    }
+
+    private void requestPermission(){
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(activity,Manifest.permission.READ_EXTERNAL_STORAGE)){
+
+            Toast.makeText(context,"GPS permission allows us to access location data. Please allow in App Settings for additional functionality.",Toast.LENGTH_LONG).show();
+
+        } else {
+
+            ActivityCompat.requestPermissions(activity,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Toast.makeText(context,"Permission Granted",Toast.LENGTH_LONG).show();
+                } else {
+
+                    Toast.makeText(context,"Permission Denied",Toast.LENGTH_LONG).show();
+                }
+                break;
         }
     }
 }

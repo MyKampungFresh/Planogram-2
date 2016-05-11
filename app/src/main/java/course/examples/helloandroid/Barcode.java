@@ -8,7 +8,7 @@ import android.view.View;
 
 import java.util.Arrays;
 
-public class DrawBarcode extends View {
+public class Barcode extends View {
     Paint paint = new Paint();
 
     private static String guardBar = "(101)";
@@ -31,17 +31,19 @@ public class DrawBarcode extends View {
     String encoding;
     String code;
 
+    BarcodeData bcData;
 
-    public DrawBarcode(Context context) {
+    public Barcode(Context context, String code) {
         super(context);
         paint.setColor(Color.BLACK);
         paint.setAntiAlias(true);
+
+        bcData = new BarcodeData(code);
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-        int[] bcDigits = {7,9,9,3,6,6,6,2,9,7,0,2};
-        code = "799366629702";
+        int[] bcDigits = bcData.getCodeDigits();
 
         encodeUPCA(bcDigits);
         drawBars(canvas);
