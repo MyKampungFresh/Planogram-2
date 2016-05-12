@@ -5,12 +5,16 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Layout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -37,13 +41,13 @@ public class MainActivity extends Activity {
 
         res = getResources();
 
-        progress = ProgressDialog.show(this, "dialog title",
-                "dialog message", true);
-
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             fileName = extras.getString("fileName");
             shortFileName = extras.getString("shortFileName");
+
+            progress = ProgressDialog.show(this, "Opening planogram " + shortFileName,
+                    "Please wait. This could take some time.", true);
 
             if(shortFileName != null) {
                 pdfFile = new File(fileName);
@@ -60,6 +64,8 @@ public class MainActivity extends Activity {
                             public void run()
                             {
                                 progress.dismiss();
+                                View view = findViewById(R.id.workView);
+                                view.setVisibility(View.VISIBLE);
                                 refreshView();
                             }
                         });
@@ -80,6 +86,14 @@ public class MainActivity extends Activity {
             public void onSwipeRight() {
                 prevProduct(workView);
             }
+
+            /*@Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                v = workView;
+                Log.d("DEBUG_TAG","onTouch: " + event.toString());
+                return true;
+            }*/
         });
     }
 
@@ -135,54 +149,57 @@ public class MainActivity extends Activity {
             expCode = extras.getString("expCode");
         }
 
-        currentProd = plano.getProduct(loc);
+        if (plano != null) {
 
-        totalNbProd = plano.getNbProducts();
+            currentProd = plano.getProduct(loc);
 
-        // Description
-        TextView prodDesc = (TextView) findViewById(R.id.prodDescription);
-        txtProdDesc = res.getString(R.string.desc, currentProd.getDesc());
-        prodDesc.setText(txtProdDesc);
+            totalNbProd = plano.getNbProducts();
 
-        // Format
-        TextView prodFormat = (TextView) findViewById(R.id.prodFormat);
-        txtProdFormat = res.getString(R.string.format, currentProd.getFormat());
-        prodFormat.setText(txtProdFormat);
+            // Description
+            TextView prodDesc = (TextView) findViewById(R.id.prodDescription);
+            txtProdDesc = res.getString(R.string.desc, currentProd.getDesc());
+            prodDesc.setText(txtProdDesc);
 
-        // Draw barcode
-        FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
-        Barcode dv = new Barcode(this,currentProd.getUpc());
-        frameBarcode.addView(dv);
+            // Format
+            TextView prodFormat = (TextView) findViewById(R.id.prodFormat);
+            txtProdFormat = res.getString(R.string.format, currentProd.getFormat());
+            prodFormat.setText(txtProdFormat);
 
-        // Show barcode data
-        TextView UPC = (TextView) findViewById(R.id.UPC);
-        txtUPC = res.getString(R.string.upc, currentProd.getUpc());
-        UPC.setText(txtUPC);
+            // Draw barcode
+            FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
+            Barcode dv = new Barcode(this, currentProd.getUpc());
+            frameBarcode.addView(dv);
 
-        // Facing
-        TextView nbFacing = (TextView) findViewById(R.id.nbFacing);
-        txtNbFacing = res.getString(R.string.nbFacing, currentProd.getNbFacing());
-        nbFacing.setText(txtNbFacing);
+            // Show barcode data
+            TextView UPC = (TextView) findViewById(R.id.UPC);
+            txtUPC = res.getString(R.string.upc, currentProd.getUpc());
+            UPC.setText(txtUPC);
 
-        // Expiration
-        Button btnExp = (Button) findViewById(R.id.btnExpiration);
-        if (date != null) {
-            String text = res.getString(R.string.setExpiration, nbExp, nbTotal, date);
-            btnExp.setText(text);
+            // Facing
+            TextView nbFacing = (TextView) findViewById(R.id.nbFacing);
+            txtNbFacing = res.getString(R.string.nbFacing, currentProd.getNbFacing());
+            nbFacing.setText(txtNbFacing);
 
-            // This is stupid
-            exp = new Expiration(expCode);
+            // Expiration
+            Button btnExp = (Button) findViewById(R.id.btnExpiration);
+            if (date != null) {
+                String text = res.getString(R.string.setExpiration, nbExp, nbTotal, date);
+                btnExp.setText(text);
 
-            plano.setExpirationAtPos(loc, exp);
+                // This is stupid
+                exp = new Expiration(expCode);
+
+                plano.setExpirationAtPos(loc, exp);
+            }
+
+            // Loc
+            txtLoc = res.getString(R.string.setLoc, loc, totalNbProd);
+            ((TextView) findViewById(R.id.loc)).setText(txtLoc);
+
+            // Shelf height
+            txtShelfHeight = res.getString(R.string.shelfHeight, currentProd.getShelfHeight());
+            ((TextView) findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
         }
-
-        // Loc
-        txtLoc = res.getString(R.string.setLoc, loc, totalNbProd);
-        ((TextView) findViewById(R.id.loc)).setText(txtLoc);
-
-        // Shelf height
-        txtShelfHeight = res.getString(R.string.shelfHeight, currentProd.getShelfHeight());
-        ((TextView) findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
 
     }
 
@@ -200,6 +217,11 @@ public class MainActivity extends Activity {
             loc = loc - 1;
 
         refreshView();
+    }
+
+    private void doneProduct() {
+
+        //nextProduct();
     }
 
 }
