@@ -1,10 +1,14 @@
 package course.examples.helloandroid;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
@@ -12,6 +16,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,9 +32,13 @@ public class MainActivity extends Activity {
 
     private Planogram plano;
 
+    private Expiration mExpiration;
+
     File pdfFile = null;
 
     ProgressDialog progress;
+
+    View workView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +55,8 @@ public class MainActivity extends Activity {
             fileName = extras.getString("fileName");
             shortFileName = extras.getString("shortFileName");
 
-            progress = ProgressDialog.show(this, "Opening planogram " + shortFileName,
-                    "Please wait. This could take some time.", true);
+            progress = ProgressDialog.show(this, getString(R.string.openPlanoMsg) + " " + shortFileName,
+                    getString(R.string.progressMsg), true);
 
             if(shortFileName != null) {
                 pdfFile = new File(fileName);
@@ -75,7 +84,7 @@ public class MainActivity extends Activity {
         }
 
         // Swipe gesture
-        final View workView = findViewById(R.id.workView);
+        workView = findViewById(R.id.workView);
         workView.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeLeft() {
@@ -87,13 +96,12 @@ public class MainActivity extends Activity {
                 prevProduct(workView);
             }
 
-            /*@Override
-            public boolean onTouch(View v, MotionEvent event) {
+            @Override
+            public boolean onSingleTap(MotionEvent event) {
 
-                v = workView;
-                Log.d("DEBUG_TAG","onTouch: " + event.toString());
+                doneProduct(workView);
                 return true;
-            }*/
+            }
         });
     }
 
@@ -120,8 +128,44 @@ public class MainActivity extends Activity {
     }
 
     public void setExpiration(View v) {
-        Intent intent = new Intent(MainActivity.this, setExpirationActivity.class);
-        MainActivity.this.startActivity(intent);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Set expiration");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String expCode;
+                expCode = input.getText().toString();
+
+                mExpiration = new Expiration(expCode);
+
+                Button btnExp = (Button) findViewById(R.id.btnExpiration);
+                if(mExpiration.isValid()) {
+                    String text = res.getString(R.string.setExpiration,
+                            mExpiration.getNbExpiring(),
+                            mExpiration.getNbTotal(),
+                            mExpiration.getDateStr());
+                    btnExp.setText(text);
+
+                    plano.setExpirationAtPos(loc, mExpiration);
+                } else {
+                    btnExp.setText(R.string.expValidityNotice);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     private void refreshView(){
@@ -219,9 +263,10 @@ public class MainActivity extends Activity {
         refreshView();
     }
 
-    private void doneProduct() {
+    private void doneProduct(View v) {
 
-        //nextProduct();
+        v.setBackgroundColor(Color.GREEN);
+        nextProduct(v);
     }
 
 }

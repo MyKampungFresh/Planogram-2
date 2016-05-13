@@ -22,5 +22,8 @@
     <string name="month">Month</string>
     <string name="expValidityNotice">Expiration is not valid</string>
     <string name="open_planogram">Open planogram</string>
-    <string name="continue_planogram">Continue planogram</string>>
+    <string name="continue_planogram">Continue planogram</string>
+
+    <string name="openPlanoMsg">Open planogram</string>
+    <string name="progressMsg">Please wait. This could take some time.</string>
 </resources>
