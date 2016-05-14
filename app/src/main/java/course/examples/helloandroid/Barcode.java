@@ -123,7 +123,7 @@ public class Barcode extends View {
 
         paint.setStrokeWidth(scaling);
 
-        canvas.drawColor(Color.WHITE);
+        canvas.drawColor(Color.TRANSPARENT);
 
         for(int i = 0; i < encoding.length(); i++)
         {

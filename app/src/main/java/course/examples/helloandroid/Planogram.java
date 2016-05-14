@@ -1,6 +1,7 @@
 package course.examples.helloandroid;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,11 +11,15 @@ import org.apache.pdfbox.text.PDFTextStripperByArea;
 
 import java.sql.*;
 
+//TODO: Change variable name "position" for "loc" to avoid ambiguity
+
 public class Planogram {
 
-    private Product[] products;
+    private int mNbProducts;
+    private Product[] mProducts;
 
-    private int nbProducts;
+    private boolean[] mIsPlaced;
+    private boolean[] mIsNew;
 
     Connection dbConnection = null;
 
@@ -51,12 +56,12 @@ public class Planogram {
 
         // Count number of products... "There's got to be a better way!"
         Matcher nbProductsMatcher = prodPatternObject.matcher(pdfString);
-        nbProducts = 0;
+        mNbProducts = 0;
         while (nbProductsMatcher.find())
-            nbProducts++;
+            mNbProducts++;
 
         // Initialize the array for the products
-        products = new Product[nbProducts];
+        mProducts = new Product[mNbProducts];
 
         //Matches date
         String datePattern = "([0-9]{1,2})\\s(\\w{3,})\\s([0-9]{4})";
@@ -101,7 +106,7 @@ public class Planogram {
 			System.out.println("Found value: " + "\"" + prodMatcher.group(6) + "\"" );
 			System.out.println("Found value: " + "\"" + prodMatcher.group(7) + "\"" );*/
 
-                products[i] = new Product(prodMatcher.group(2),
+                mProducts[i] = new Product(prodMatcher.group(2),
                         prodMatcher.group(3),
                         prodMatcher.group(5),
                         prodMatcher.group(6),
@@ -118,6 +123,13 @@ public class Planogram {
         }
         // End of main loop
 
+        // Array for indicating if the product has been placed correctly
+        mIsPlaced = new boolean[mNbProducts];
+        Arrays.fill(mIsPlaced, false);
+
+        // Array for indicating if product is new and not in the inventory
+        mIsNew = new boolean[mNbProducts];
+        Arrays.fill(mIsNew, false);
     }
 
     public void saveInDatabase(String dbFilename){
@@ -146,13 +158,13 @@ public class Planogram {
                     "SHELFHEIGHT INT NOT NULL)";
             stmt.executeUpdate(sql);
 
-            for(i = 0; i < nbProducts; i++) {
+            for(i = 0; i < mNbProducts; i++) {
                 pos = i + 1;
                 sql = "INSERT INTO PLANOGRAM (POS,IDNB,UPC,DESCRIPTION,FORMAT,NBFACING,SHELFNB,SHELFHEIGHT) " +
-                        "VALUES (" + pos + ",'" + products[i].getIdNb() + "','" + products[i].getUpc() + "','" +
-                        products[i].getDesc() + "','" + products[i].getFormat() + "'," +
-                        products[i].getNbFacing() + "," + products[i].getShelfNb() + "," +
-                        products[i].getShelfHeight() + ");";
+                        "VALUES (" + pos + ",'" + mProducts[i].getIdNb() + "','" + mProducts[i].getUpc() + "','" +
+                        mProducts[i].getDesc() + "','" + mProducts[i].getFormat() + "'," +
+                        mProducts[i].getNbFacing() + "," + mProducts[i].getShelfNb() + "," +
+                        mProducts[i].getShelfHeight() + ");";
                 stmt.executeUpdate(sql);
             }
 
@@ -195,22 +207,38 @@ public class Planogram {
 
     public void setNewProdAtPos(int position, boolean isNewProd){
 
-        products[position].setIsNewProd(isNewProd);
+        mProducts[position].setIsNewProd(isNewProd);
     }
 
     public void setExpirationAtPos(int position, Expiration exp){
 
-        products[position].setExpiration(exp);
+        mProducts[position].setExpiration(exp);
     }
 
     public Product getProduct(int position){
 
-        return products[position];
+        return mProducts[position];
     }
 
     public int getNbProducts(){
 
-        return nbProducts;
+        return mNbProducts;
+    }
+
+    public void productIsPlaced(int loc) {
+        mIsPlaced[loc] = true;
+    }
+
+    public boolean isProductPlaced(int loc) {
+        return mIsPlaced[loc];
+    }
+
+    public void productIsNew(int loc) {
+        mIsNew[loc] = true;
+    }
+
+    public boolean isProductNew(int loc) {
+        return mIsNew[loc];
     }
 
 }

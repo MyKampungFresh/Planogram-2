@@ -17,11 +17,21 @@
     android:focusableInTouchMode="true"
     android:baselineAligned="false">
 
-    <Space
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.20" />
+        android:layout_weight="0.23"
+        android:id="@+id/frameIsDone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:id="@+id/imgCheck"
+            android:layout_gravity="center_horizontal|right"
+            android:contentDescription="Check"
+            android:src="@drawable/ic_check" />
+    </FrameLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -49,7 +59,7 @@
 
     <FrameLayout
         android:layout_width="200dp"
-        android:layout_height="125dp"
+        android:layout_height="114dp"
         android:layout_gravity="center_horizontal"
         android:id="@+id/frameBarcode"
         android:minWidth="200dp"></FrameLayout>
@@ -79,7 +89,7 @@
 
     <Space
         android:layout_width="324dp"
-        android:layout_height="49dp"
+        android:layout_height="25dp"
         android:layout_gravity="center_horizontal" />
 
     <Button
@@ -96,6 +106,19 @@
         android:layout_gravity="center_horizontal"
         android:layout_weight="0.20"
         android:id="@+id/emptySpace" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/newProd"
+        android:id="@+id/newProd"
+        android:layout_gravity="center_horizontal" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.20" />
 
     <FrameLayout
         android:layout_width="match_parent"

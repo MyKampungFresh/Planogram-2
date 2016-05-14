@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -31,8 +32,6 @@ public class MainActivity extends Activity {
     private Resources res;
 
     private Planogram plano;
-
-    private Expiration mExpiration;
 
     File pdfFile = null;
 
@@ -99,10 +98,13 @@ public class MainActivity extends Activity {
             @Override
             public boolean onSingleTap(MotionEvent event) {
 
-                doneProduct(workView);
+                FrameLayout frameIsPlaced = (FrameLayout) findViewById(R.id.frameIsDone);
+                doneProduct(frameIsPlaced);
                 return true;
             }
         });
+
+        addListenerProductIsNew();
     }
 
     @Override
@@ -127,6 +129,24 @@ public class MainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void addListenerProductIsNew() {
+
+        CheckBox chkNewProd = (CheckBox) findViewById(R.id.newProd);
+
+        chkNewProd.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (((CheckBox) v).isChecked()) {
+                    plano.productIsNew(loc);
+                }
+
+            }
+        });
+
+    }
+
     public void setExpiration(View v) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -142,17 +162,17 @@ public class MainActivity extends Activity {
                 String expCode;
                 expCode = input.getText().toString();
 
-                mExpiration = new Expiration(expCode);
+                Expiration exp = new Expiration(expCode);
 
                 Button btnExp = (Button) findViewById(R.id.btnExpiration);
-                if(mExpiration.isValid()) {
+                if(exp.isValid()) {
                     String text = res.getString(R.string.setExpiration,
-                            mExpiration.getNbExpiring(),
-                            mExpiration.getNbTotal(),
-                            mExpiration.getDateStr());
+                            exp.getNbExpiring(),
+                            exp.getNbTotal(),
+                            exp.getDateStr());
                     btnExp.setText(text);
 
-                    plano.setExpirationAtPos(loc, mExpiration);
+                    plano.setExpirationAtPos(loc, exp);
                 } else {
                     btnExp.setText(R.string.expValidityNotice);
                 }
@@ -170,11 +190,6 @@ public class MainActivity extends Activity {
 
     private void refreshView(){
 
-        int nbExp = 0;
-        int nbTotal = 0;
-        String date = null;
-        String expCode = null;
-
         String txtProdDesc;
         String txtProdFormat;
         String txtUPC;
@@ -182,18 +197,7 @@ public class MainActivity extends Activity {
         String txtLoc;
         String txtShelfHeight;
 
-        Expiration exp;
         Product currentProd;
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            date = extras.getString("date");
-            nbExp = extras.getInt("nbExp");
-            nbTotal = extras.getInt("nbTotal");
-            expCode = extras.getString("expCode");
-        }
-
-        if (plano != null) {
 
             currentProd = plano.getProduct(loc);
 
@@ -226,14 +230,16 @@ public class MainActivity extends Activity {
 
             // Expiration
             Button btnExp = (Button) findViewById(R.id.btnExpiration);
-            if (date != null) {
-                String text = res.getString(R.string.setExpiration, nbExp, nbTotal, date);
+            if (plano.getProduct(loc).isExpired()) {
+                Expiration exp = plano.getProduct(loc).getExpiration();
+
+                String text = res.getString(R.string.setExpiration,
+                        exp.getNbExpiring(),
+                        exp.getNbTotal(),
+                        exp.getDateStr());
                 btnExp.setText(text);
-
-                // This is stupid
-                exp = new Expiration(expCode);
-
-                plano.setExpirationAtPos(loc, exp);
+            } else {
+                btnExp.setText("Expiration");
             }
 
             // Loc
@@ -241,9 +247,25 @@ public class MainActivity extends Activity {
             ((TextView) findViewById(R.id.loc)).setText(txtLoc);
 
             // Shelf height
-            txtShelfHeight = res.getString(R.string.shelfHeight, currentProd.getShelfHeight());
+            txtShelfHeight = currentProd.getShelfNb() + " - " +
+                    res.getString(R.string.shelfHeight, currentProd.getShelfHeight());
             ((TextView) findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
-        }
+
+            // Is product has been placed?
+            FrameLayout frameIsPlaced = (FrameLayout) findViewById(R.id.frameIsDone);
+            if(plano.isProductPlaced(loc)) {
+                frameIsPlaced.setBackgroundColor(Color.GREEN);
+            } else {
+                frameIsPlaced.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            // Is product new?
+            CheckBox chkNewProd = (CheckBox) findViewById(R.id.newProd);
+            if(plano.isProductNew(loc)) {
+                chkNewProd.setChecked(true);
+            } else {
+                chkNewProd.setChecked(false);
+            }
 
     }
 
@@ -265,8 +287,8 @@ public class MainActivity extends Activity {
 
     private void doneProduct(View v) {
 
+        plano.productIsPlaced(loc);
         v.setBackgroundColor(Color.GREEN);
-        nextProduct(v);
     }
 
 }
