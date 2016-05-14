@@ -17,39 +17,50 @@
     android:focusableInTouchMode="true"
     android:baselineAligned="false">
 
-    <FrameLayout
+    <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.23"
-        android:id="@+id/frameIsDone">
+        android:layout_weight="0.10" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.10"
+        android:id="@+id/frameProdDesc">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/desc"
+            android:id="@+id/prodDescription"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/format"
+            android:id="@+id/prodFormat"
+            android:layout_gravity="center_horizontal|bottom"
+            android:textColor="@android:color/black" />
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/imgCheck"
-            android:layout_gravity="center_horizontal|right"
+            android:layout_gravity="bottom|right"
+            android:adjustViewBounds="false"
             android:contentDescription="Check"
-            android:src="@drawable/ic_check" />
+            android:src="@drawable/ic_check"
+            android:maxHeight="60dp"
+            android:visibility="visible"
+            android:minHeight="40dp"
+            android:layout_marginRight="10dp" />
+
     </FrameLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/desc"
-        android:id="@+id/prodDescription"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@android:color/black" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/format"
-        android:id="@+id/prodFormat"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@android:color/black" />
 
     <Space
         android:layout_width="match_parent"

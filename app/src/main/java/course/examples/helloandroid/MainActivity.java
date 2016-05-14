@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -98,8 +99,8 @@ public class MainActivity extends Activity {
             @Override
             public boolean onSingleTap(MotionEvent event) {
 
-                FrameLayout frameIsPlaced = (FrameLayout) findViewById(R.id.frameIsDone);
-                doneProduct(frameIsPlaced);
+                FrameLayout frameProdDesc = (FrameLayout) findViewById(R.id.frameProdDesc);
+                doneProduct(frameProdDesc);
                 return true;
             }
         });
@@ -121,9 +122,13 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Log.d("ACTION", "Settings pressed");
             return true;
+        } else if (id == R.id.action_save) {
+
+        } else if (id == R.id.action_about) {
+            showAboutDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -141,7 +146,6 @@ public class MainActivity extends Activity {
                 if (((CheckBox) v).isChecked()) {
                     plano.productIsNew(loc);
                 }
-
             }
         });
 
@@ -252,11 +256,14 @@ public class MainActivity extends Activity {
             ((TextView) findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
 
             // Is product has been placed?
-            FrameLayout frameIsPlaced = (FrameLayout) findViewById(R.id.frameIsDone);
+            FrameLayout frameProdDesc = (FrameLayout) findViewById(R.id.frameProdDesc);
+            ImageView imgCheck = (ImageView) findViewById(R.id.imgCheck);
             if(plano.isProductPlaced(loc)) {
-                frameIsPlaced.setBackgroundColor(Color.GREEN);
+                frameProdDesc.setBackgroundColor(0xFF008000);
+                imgCheck.setVisibility(View.VISIBLE);
             } else {
-                frameIsPlaced.setBackgroundColor(Color.TRANSPARENT);
+                frameProdDesc.setBackgroundColor(Color.TRANSPARENT);
+                imgCheck.setVisibility(View.INVISIBLE);
             }
 
             // Is product new?
@@ -288,7 +295,29 @@ public class MainActivity extends Activity {
     private void doneProduct(View v) {
 
         plano.productIsPlaced(loc);
-        v.setBackgroundColor(Color.GREEN);
+        v.setBackgroundColor(0xFF008000);
+
+        ImageView imgCheck = (ImageView) findViewById(R.id.imgCheck);
+        imgCheck.setVisibility(View.VISIBLE);
+    }
+
+    private void showAboutDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("About Planogram");
+
+        final TextView about = new TextView(this);
+        about.setText(R.string.about);
+        builder.setView(about);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
 }

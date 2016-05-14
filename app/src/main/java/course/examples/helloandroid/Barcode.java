@@ -49,7 +49,7 @@ public class Barcode extends View {
         int[] bcDigits = bcData.getCodeDigits();
 
         encodeUPCA(bcDigits);
-       drawBars(canvas);
+        drawBars(canvas);
     }
 
     private void encodeUPCA(int[] bcDigits){
@@ -123,7 +123,7 @@ public class Barcode extends View {
 
         paint.setStrokeWidth(scaling);
 
-        canvas.drawColor(Color.TRANSPARENT);
+        canvas.drawColor(Color.WHITE);
 
         for(int i = 0; i < encoding.length(); i++)
         {
