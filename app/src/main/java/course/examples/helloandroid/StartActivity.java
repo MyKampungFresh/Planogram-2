@@ -28,7 +28,8 @@ public class StartActivity extends Activity {
     }
 
     public void continuePlano(View v) {
-
+        Intent intent = new Intent(StartActivity.this, OpenRecent.class);
+        StartActivity.this.startActivity(intent);
     }
 
 }

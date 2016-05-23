@@ -3,6 +3,7 @@ package course.examples.helloandroid;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -27,7 +28,7 @@ import java.io.File;
 
 public class MainActivity extends Activity {
 
-    private int loc = 1;
+    private int pos = 0;
     private int totalNbProd = 0;
 
     private Resources res;
@@ -65,8 +66,9 @@ public class MainActivity extends Activity {
                     @Override
                     public void run()
                     {
-                        // do the thing that takes a long time
+
                         plano = new Planogram(pdfFile);
+                        saveInDatabase();
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -144,7 +146,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
 
                 if (((CheckBox) v).isChecked()) {
-                    plano.productIsNew(loc);
+                    plano.productIsNew(pos);
                 }
             }
         });
@@ -176,7 +178,7 @@ public class MainActivity extends Activity {
                             exp.getDateStr());
                     btnExp.setText(text);
 
-                    plano.setExpirationAtPos(loc, exp);
+                    plano.setExpirationAtPos(pos, exp);
                 } else {
                     btnExp.setText(R.string.expValidityNotice);
                 }
@@ -203,9 +205,9 @@ public class MainActivity extends Activity {
 
         Product currentProd;
 
-            currentProd = plano.getProduct(loc);
+        currentProd = plano.getProduct(pos);
 
-            totalNbProd = plano.getNbProducts();
+        totalNbProd = plano.getNbProducts();
 
             // Description
             TextView prodDesc = (TextView) findViewById(R.id.prodDescription);
@@ -234,8 +236,8 @@ public class MainActivity extends Activity {
 
             // Expiration
             Button btnExp = (Button) findViewById(R.id.btnExpiration);
-            if (plano.getProduct(loc).isExpired()) {
-                Expiration exp = plano.getProduct(loc).getExpiration();
+            if (plano.getProduct(pos).isExpired()) {
+                Expiration exp = plano.getProduct(pos).getExpiration();
 
                 String text = res.getString(R.string.setExpiration,
                         exp.getNbExpiring(),
@@ -246,8 +248,8 @@ public class MainActivity extends Activity {
                 btnExp.setText("Expiration");
             }
 
-            // Loc
-            txtLoc = res.getString(R.string.setLoc, loc, totalNbProd);
+            // Pos
+            txtLoc = res.getString(R.string.setLoc, pos + 1, totalNbProd);
             ((TextView) findViewById(R.id.loc)).setText(txtLoc);
 
             // Shelf height
@@ -258,7 +260,7 @@ public class MainActivity extends Activity {
             // Is product has been placed?
             FrameLayout frameProdDesc = (FrameLayout) findViewById(R.id.frameProdDesc);
             ImageView imgCheck = (ImageView) findViewById(R.id.imgCheck);
-            if(plano.isProductPlaced(loc)) {
+            if(plano.isProductPlaced(pos)) {
                 frameProdDesc.setBackgroundColor(0xFF008000);
                 imgCheck.setVisibility(View.VISIBLE);
             } else {
@@ -268,7 +270,7 @@ public class MainActivity extends Activity {
 
             // Is product new?
             CheckBox chkNewProd = (CheckBox) findViewById(R.id.newProd);
-            if(plano.isProductNew(loc)) {
+            if(plano.isProductNew(pos)) {
                 chkNewProd.setChecked(true);
             } else {
                 chkNewProd.setChecked(false);
@@ -278,23 +280,23 @@ public class MainActivity extends Activity {
 
     private void nextProduct(View v) {
 
-        if(loc < totalNbProd)
-            loc++;
+        if(pos + 1 < totalNbProd)
+            pos++;
 
         refreshView();
     }
 
     private void prevProduct(View v) {
 
-        if(loc > 1)
-            loc = loc - 1;
+        if(pos >= 1)
+            pos = pos - 1;
 
         refreshView();
     }
 
     private void doneProduct(View v) {
 
-        plano.productIsPlaced(loc);
+        plano.productIsPlaced(pos);
         v.setBackgroundColor(0xFF008000);
 
         ImageView imgCheck = (ImageView) findViewById(R.id.imgCheck);
@@ -318,6 +320,10 @@ public class MainActivity extends Activity {
         });
 
         builder.show();
+    }
+
+    private void saveInDatabase() {
+        plano.saveInDatabase(this);
     }
 
 }

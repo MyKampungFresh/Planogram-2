@@ -3,30 +3,52 @@ package course.examples.helloandroid;
 /**
  * Implements a product
  *
+ * A product is identified by its McKesson ID number, its UPC, its description and its format.
+ * It can be expiring soon or be a new product. Along with those attributes, a product is usually
+ * localised in a store at one or more emplacement. A localisation is a unambiguous section in a store,
+ * habitually 4 feet of length, with shelves and or hooks to place products. In the localisation, a
+ * product has a position defined by its order from the top left, in ascending order from left to
+ * right, top to bottom. The position is given to the first from the left if there are multiple
+ * contiguous copies of the same product. The number of copies is the number of facing. If the product
+ * is on two or more shelves separated by other products (i.e. not contiguous), it has then another
+ * position along with the other attributes (number of facing, shelf number and shelf height).
+ *
  */
 
 public class Product {
 
-    boolean isRemoved; //Okay goes in there, it's discontinued
-    boolean isNewProd; //Hmm...
+    private boolean isNewProd = false;
+    private boolean mIsPlaced = false;
 
-    int nbFacing;
-    int shelfNb;
-    int shelfHeight;
+    private int[] mLoc;
 
-    String idNb;
+    //TODO Change those attributes in arrays
+    private int mPos;
+    private int nbFacing;
+    private int shelfNb;
+    private int shelfHeight;
+
+    String mMcKessonId;
     String upc;
     String description;
     String format;
-    Expiration exp;
+    Expiration mExp;
 
     public Product() {
     }
 
-    public Product(String idNb, String upc, String description, String format,
+    public Product(String idNb, String upc, String description, String format) {
+        mMcKessonId = idNb;
+        this.upc = upc;
+        this.description = description;
+        this.format = format;
+    }
+
+    public Product(int pos, String idNb, String upc, String description, String format,
                    int nbFacing, int shelfNb, int shelfHeight, boolean isNewProd) {
 
-        this.idNb = idNb;
+        mPos = pos;
+        mMcKessonId = idNb;
         this.upc = upc;
         this.description = description;
         this.format = format;
@@ -36,10 +58,11 @@ public class Product {
         this.isNewProd = isNewProd;
     }
 
-    public Product(String idNb, String upc, String description, String format,
+    public Product(int pos, String idNb, String upc, String description, String format,
                    int nbFacing, int shelfNb, int shelfHeight, boolean isNewProd, Expiration exp) {
 
-        this.idNb = idNb;
+        mPos = pos;
+        mMcKessonId = idNb;
         this.upc = upc;
         this.description = description;
         this.format = format;
@@ -47,12 +70,13 @@ public class Product {
         this.shelfNb = shelfNb;
         this.shelfHeight = shelfHeight;
         this.isNewProd = isNewProd;
-        this.exp = exp;
+        mExp = exp;
     }
 
-    public Product(String idNb, String upc, String description, String format, int nbFacing) {
+    public Product(int pos, String idNb, String upc, String description, String format, int nbFacing) {
 
-        this.idNb = idNb;
+        mPos = pos;
+        mMcKessonId = idNb;
         this.upc = upc;
         this.description = description;
         this.format = format;
@@ -62,8 +86,16 @@ public class Product {
     }
 
     // Set product attributes
+    public void setIsPlaced(boolean isPlaced) {
+        mIsPlaced = isPlaced;
+    }
+
+    public void setPos(int pos) {
+        mPos = pos;
+    }
+
     public void setIdNb(String idNb) {
-        this.idNb = idNb;
+        mMcKessonId = idNb;
     }
 
     public void setUpc(String upc) {
@@ -95,12 +127,20 @@ public class Product {
     }
 
     public void setExpiration(Expiration exp) {
-        this.exp = exp;
+        mExp = exp;
     }
 
     // get product attributes
+    public boolean isPlaced() {
+        return mIsPlaced;
+    }
+
+    public int getPos() {
+        return mPos;
+    }
+
     public String getIdNb() {
-        return idNb;
+        return mMcKessonId;
     }
 
     public String getUpc() {
@@ -127,34 +167,24 @@ public class Product {
         return shelfHeight;
     }
 
-    public boolean getIsNewProd() {
+    public boolean isNew() {
         return isNewProd;
     }
 
     public Expiration getExpiration() {
-        return exp;
+        return mExp;
     }
 
     public boolean isExpired(){
 
-        if(exp == null)
+        if(mExp == null)
             return false;
         else
             return true;
     }
 
-    public String getProductInfo() {
-        String temp;
-
-        temp = idNb + " " + upc + " " + description + " " + format + " " + nbFacing;
-
-        return temp;
-    }
-
-    public void printProductInfo() {
-
-        System.out.println(idNb + " " + upc + " " + description + " " + format + " " + nbFacing);
-
+    public String toString() {
+        return mPos + " " + mMcKessonId + " " + upc + " " + description + " " + format + " " + nbFacing;
     }
 
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="course.examples.helloandroid">
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
@@ -19,8 +20,9 @@
         </activity>
         <activity
             android:name=".OpenFile"
-            android:permission="android.permission.READ_EXTERNAL_STORAGE"/>
+            android:permission="android.permission.READ_EXTERNAL_STORAGE" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".OpenRecent"></activity>
     </application>
 
 </manifest>

@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+// TODO Remove unused and unsafe constructors and set methods
+
 public class Expiration {
 
     private int day = 1;
@@ -12,6 +14,7 @@ public class Expiration {
     private int year;
     private int nbExpiring = 1;
     private int nbTotal = 1;
+    private String mExpCode = "";
 
     public Expiration(String expCode){
 
@@ -24,6 +27,8 @@ public class Expiration {
             month = Integer.parseInt(expCode.substring(0,expCode.length()-4));
 
             findYear();
+
+            mExpCode = expCode;
         }
     }
 
@@ -80,6 +85,10 @@ public class Expiration {
 
     public void setNbTotal(int nbTotal){
         this.nbTotal = nbTotal;
+    }
+
+    public String getExpCode() {
+        return mExpCode;
     }
 
     public int getDay(){

@@ -1,5 +1,7 @@
 package course.examples.helloandroid;
 
+import android.content.Context;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -10,8 +12,6 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.PDFTextStripperByArea;
 
 import java.sql.*;
-
-//TODO: Change variable name "position" for "loc" to avoid ambiguity
 
 public class Planogram {
 
@@ -42,7 +42,6 @@ public class Planogram {
                 stripper.setSortByPosition( true );
                 PDFTextStripper Tstripper = new PDFTextStripper();
                 pdfString = Tstripper.getText(document);
-                //System.out.println("Text:"+pdfString);
 
                 document.close();
             }
@@ -69,10 +68,7 @@ public class Planogram {
         Matcher dateMatcher = datePatternObject.matcher(pdfString);
 
         if (dateMatcher.find()) {
-    	/*System.out.println("Found value: " + "\"" + dateMatcher.group(0) + "\"" );
-		System.out.println("Found value: " + "\"" + dateMatcher.group(1) + "\"" );
-		System.out.println("Found value: " + "\"" + dateMatcher.group(2) + "\"" );
-		System.out.println("Found value: " + "\"" + dateMatcher.group(3) + "\"" );*/
+
         }
 
         String[] lines = pdfString.split(System.getProperty("line.separator"));
@@ -86,9 +82,6 @@ public class Planogram {
             Matcher shelfMatcher = shelfPatternObject.matcher(currentLine);
 
             if (shelfMatcher.find()) {
-			/*System.out.println("Found value: " + "\"" + shelfMatcher.group(0) + "\"" );
-			System.out.println("Found value: " + "\"" + shelfMatcher.group(1) + "\"" );
-			System.out.println("Found value: " + "\"" + shelfMatcher.group(2) + "\"" );*/
 
                 shelfNumber = Integer.parseInt(shelfMatcher.group(1));
                 shelfHeight = Integer.parseInt(shelfMatcher.group(2));
@@ -97,23 +90,13 @@ public class Planogram {
             // Matches product
             Matcher prodMatcher = prodPatternObject.matcher(currentLine);
             if (prodMatcher.find()) {
-  	    	/*System.out.println("Found value: " + "\"" + prodMatcher.group(0) + "\"" );
-			System.out.println("Found value: " + "\"" + prodMatcher.group(1) + "\"" );
-			System.out.println("Found value: " + "\"" + prodMatcher.group(2) + "\"" );
-			System.out.println("Found value: " + "\"" + prodMatcher.group(3) + "\"" );
-			System.out.println("Found value: " + "\"" + prodMatcher.group(4) + "\"" );
-			System.out.println("Found value: " + "\"" + prodMatcher.group(5) + "\"" );
-			System.out.println("Found value: " + "\"" + prodMatcher.group(6) + "\"" );
-			System.out.println("Found value: " + "\"" + prodMatcher.group(7) + "\"" );*/
 
-                mProducts[i] = new Product(prodMatcher.group(2),
+                mProducts[i] = new Product(i,prodMatcher.group(2),
                         prodMatcher.group(3),
                         prodMatcher.group(5),
                         prodMatcher.group(6),
                         Integer.parseInt(prodMatcher.group(7)),
                         shelfNumber,shelfHeight,false);
-
-                //System.out.println(i + " " + products[i].getDesc());
 
                 i++;
 
@@ -132,50 +115,13 @@ public class Planogram {
         Arrays.fill(mIsNew, false);
     }
 
-    public void saveInDatabase(String dbFilename){
+    public void saveInDatabase(Context context){
 
-        int i;
-        int pos = 0;
+        ProductDBHandler mProductDB = new ProductDBHandler(context);
 
-        Statement stmt = null;
-
-        System.out.println("bla");
-
-        try {
-            Class.forName("org.sqlite.JDBC");
-            dbConnection = DriverManager.getConnection("jdbc:sqlite:" + dbFilename + ".db");
-
-            stmt = dbConnection.createStatement();
-
-            String sql = "CREATE TABLE PLANOGRAM " +
-                    "(POS INT PRIMARY KEY	NOT NULL," +
-                    "IDNB	CHAR(6)," +
-                    "UPC CHAR(12)	NOT NULL," +
-                    "DESCRIPTION	TEXT," +
-                    "FORMAT        TEXT," +
-                    "NBFACING	INT NOT NULL," +
-                    "SHELFNB	INT NOT NULL," +
-                    "SHELFHEIGHT INT NOT NULL)";
-            stmt.executeUpdate(sql);
-
-            for(i = 0; i < mNbProducts; i++) {
-                pos = i + 1;
-                sql = "INSERT INTO PLANOGRAM (POS,IDNB,UPC,DESCRIPTION,FORMAT,NBFACING,SHELFNB,SHELFHEIGHT) " +
-                        "VALUES (" + pos + ",'" + mProducts[i].getIdNb() + "','" + mProducts[i].getUpc() + "','" +
-                        mProducts[i].getDesc() + "','" + mProducts[i].getFormat() + "'," +
-                        mProducts[i].getNbFacing() + "," + mProducts[i].getShelfNb() + "," +
-                        mProducts[i].getShelfHeight() + ");";
-                stmt.executeUpdate(sql);
-            }
-
-            stmt.close();
-            dbConnection.close();
-
-        } catch(Exception e) {
-            System.err.println(e.getClass().getName() + ": " + e.getMessage());
-            System.exit(0);
+        for(int i = 0; i < mNbProducts; i++) {
+            mProductDB.addProduct(mProducts[i]);
         }
-
     }
 
     /**
@@ -200,6 +146,8 @@ public class Planogram {
      *
      **/
     public void insertProduct() {
+
+
     }
 
     public void show() {
@@ -225,20 +173,20 @@ public class Planogram {
         return mNbProducts;
     }
 
-    public void productIsPlaced(int loc) {
-        mIsPlaced[loc] = true;
+    public void productIsPlaced(int pos) {
+        mIsPlaced[pos] = true;
     }
 
-    public boolean isProductPlaced(int loc) {
-        return mIsPlaced[loc];
+    public boolean isProductPlaced(int pos) {
+        return mIsPlaced[pos];
     }
 
-    public void productIsNew(int loc) {
-        mIsNew[loc] = true;
+    public void productIsNew(int pos) {
+        mIsNew[pos] = true;
     }
 
-    public boolean isProductNew(int loc) {
-        return mIsNew[loc];
+    public boolean isProductNew(int pos) {
+        return mIsNew[pos];
     }
 
 }
