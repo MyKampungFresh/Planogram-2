@@ -31,6 +31,8 @@ public class MainActivity extends Activity {
     private int pos = 0;
     private int totalNbProd = 0;
 
+    private String mDatabaseName;
+
     private Resources res;
 
     private Planogram plano;
@@ -68,6 +70,7 @@ public class MainActivity extends Activity {
                     {
 
                         plano = new Planogram(pdfFile);
+                        mDatabaseName = pdfFile.toString();
                         saveInDatabase();
 
                         runOnUiThread(new Runnable() {
@@ -323,7 +326,7 @@ public class MainActivity extends Activity {
     }
 
     private void saveInDatabase() {
-        plano.saveInDatabase(this);
+        plano.saveInDatabase(this,mDatabaseName);
     }
 
 }

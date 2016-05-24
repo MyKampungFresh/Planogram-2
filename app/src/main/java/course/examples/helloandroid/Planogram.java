@@ -3,7 +3,10 @@ package course.examples.helloandroid;
 import android.content.Context;
 
 import java.io.File;
-import java.util.Arrays;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +17,11 @@ import org.apache.pdfbox.text.PDFTextStripperByArea;
 import java.sql.*;
 
 public class Planogram {
+
+    private String mDepartmentNb;
+    private String mDepartmentName;
+    private String mPlanoLength;
+    private String mShortDate;
 
     private int mNbProducts;
     private Product[] mProducts;
@@ -49,6 +57,35 @@ public class Planogram {
             e.printStackTrace();
         }
 
+        // Pattern to match the document title
+        String docTitlePattern = "Rapport par tablette\\n([0-9]{4}) - (.*)\\n([0-9]{1,2})\\s[P,p]ieds";
+        Pattern docTitlePatternObj = Pattern.compile(docTitlePattern);
+        Matcher docTitleMatcher = docTitlePatternObj.matcher(pdfString);
+
+        if (docTitleMatcher.find()) {
+            mDepartmentNb = docTitleMatcher.group(1);
+            mDepartmentName = docTitleMatcher.group(2);
+            mPlanoLength = docTitleMatcher.group(3);
+        }
+
+        //Matches date
+        String datePattern = "([0-9]{1,2})\\s(\\w{3,})\\s([0-9]{4})";
+        Pattern datePatternObject = Pattern.compile(datePattern);
+        Matcher dateMatcher = datePatternObject.matcher(pdfString);
+
+        if (dateMatcher.find()) {
+
+            try {
+                SimpleDateFormat dateFormatInput = new SimpleDateFormat("dd-MMMM-yyyy", Locale.FRENCH);
+                Date planoCreationDate = dateFormatInput.parse(dateMatcher.group(1)
+                        + "-" + dateMatcher.group(2) + "-" + dateMatcher.group(3));
+                SimpleDateFormat dateFormatOutput = new SimpleDateFormat("ddMMyy");
+                mShortDate = dateFormatOutput.format(planoCreationDate);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
         // Pattern to match the products lines
         String prodLinePattern = "([0-9]{1,3})\\s([0-9]{6})\\s([0-9]{12})\\s(\\S+)\\s(.*)\\s([0-9]+\\sX\\s[0-9]+\\s\\w+)\\s([0-9])";
         Pattern prodPatternObject = Pattern.compile(prodLinePattern);
@@ -61,15 +98,6 @@ public class Planogram {
 
         // Initialize the array for the products
         mProducts = new Product[mNbProducts];
-
-        //Matches date
-        String datePattern = "([0-9]{1,2})\\s(\\w{3,})\\s([0-9]{4})";
-        Pattern datePatternObject = Pattern.compile(datePattern);
-        Matcher dateMatcher = datePatternObject.matcher(pdfString);
-
-        if (dateMatcher.find()) {
-
-        }
 
         String[] lines = pdfString.split(System.getProperty("line.separator"));
 
@@ -115,9 +143,9 @@ public class Planogram {
         Arrays.fill(mIsNew, false);
     }
 
-    public void saveInDatabase(Context context){
+    public void saveInDatabase(Context context, String databaseName){
 
-        ProductDBHandler mProductDB = new ProductDBHandler(context);
+        ProductDBHandler mProductDB = new ProductDBHandler(context,databaseName);
 
         for(int i = 0; i < mNbProducts; i++) {
             mProductDB.addProduct(mProducts[i]);
@@ -171,6 +199,22 @@ public class Planogram {
     public int getNbProducts(){
 
         return mNbProducts;
+    }
+
+    public String getDepartmentNb(){
+        return mDepartmentNb;
+    }
+
+    public String getDepartmentName(){
+        return mDepartmentName;
+    }
+
+    public String getPlanoLength(){
+        return mPlanoLength;
+    }
+
+    public String getShortDate(){
+        return mShortDate;
     }
 
     public void productIsPlaced(int pos) {
