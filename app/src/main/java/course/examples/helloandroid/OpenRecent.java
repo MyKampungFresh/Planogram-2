@@ -1,6 +1,7 @@
 package course.examples.helloandroid;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Environment;
@@ -34,6 +35,13 @@ public class OpenRecent extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getApplicationContext(),
                         "Click ListItem " + parent.getItemAtPosition(position), Toast.LENGTH_LONG).show();
+
+                Intent intent = new Intent(OpenRecent.this, MainActivity.class);
+                intent.putExtra("isANewPlano", false);
+                intent.putExtra("dbFileName",parent.getItemAtPosition(position).toString());
+                setResult(RESULT_OK, intent);
+
+                OpenRecent.this.startActivity(intent);
             }
         });
     }

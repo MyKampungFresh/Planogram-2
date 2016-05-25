@@ -12,7 +12,6 @@ import java.util.LinkedList;
 public class ProductDBHandler extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String TABLE_PRODUCTS = "products";
 
     public static final String KEY_ID = "id";
     public static final String KEY_POS = "position";
@@ -37,14 +36,18 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     private int mId = 1;
     private String mOrder;
 
+    private String TABLE_NAME;
+
     public ProductDBHandler(Context context, String databaseName) {
         super(context, databaseName, null, DATABASE_VERSION);
+
+        TABLE_NAME = databaseName;
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String CREATE_PRODUCT_TABLE = "CREATE TABLE " + TABLE_PRODUCTS + "(" +
+        String CREATE_PRODUCT_TABLE = "CREATE TABLE " + TABLE_NAME + "(" +
                 KEY_ID + " INT PRIMARY KEY," +
                 KEY_POS + " INT," +
                 KEY_IDNB + " CHAR(6)," +
@@ -66,7 +69,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         this.onCreate(db);
     }
 
@@ -79,7 +82,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         ContentValues values = putValues(product);
 
         // 3. insert
-        db.insert(TABLE_PRODUCTS, // table
+        db.insert(TABLE_NAME, // table
                 null, //nullColumnHack
                 values); // key/value -> keys = column names/ values = column values
 
@@ -97,13 +100,13 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         // 2. create ContentValues to add key "column"/value
         ContentValues values = putValues(product);
 
-        String INCREMENT_POS = "UPDATE " + TABLE_PRODUCTS + " SET " +
+        String INCREMENT_POS = "UPDATE " + TABLE_NAME + " SET " +
                 KEY_POS + " = " + KEY_POS + " + 1 WHERE " + KEY_POS + " >= " + product.getPos();
 
         db.execSQL(INCREMENT_POS);
 
         // 3. insert
-        db.insert(TABLE_PRODUCTS, // table
+        db.insert(TABLE_NAME, // table
                 null, //nullColumnHack
                 values); // key/value -> keys = column names/ values = column values
 
@@ -120,7 +123,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
 
         // 2. build query
         Cursor cursor =
-                db.query(TABLE_PRODUCTS, // a. table
+                db.query(TABLE_NAME, // a. table
                         COLUMNS, // b. column names
                         " " + KEY_POS + " = ?", // c. selections
                         new String[] { String.valueOf(pos) }, // d. selections args
@@ -151,7 +154,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         List<Product> products = new LinkedList<>();
 
         // 1. build the query
-        String query = "SELECT * FROM " + TABLE_PRODUCTS + " ORDER BY " + mOrder;
+        String query = "SELECT * FROM " + TABLE_NAME + " ORDER BY " + mOrder;
 
         // 2. get reference to writable DB
         SQLiteDatabase db = this.getWritableDatabase();
@@ -200,7 +203,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
                 break;
         }
 
-        String query = "SELECT * FROM " + TABLE_PRODUCTS + " WHERE "
+        String query = "SELECT * FROM " + TABLE_NAME + " WHERE "
                 + column + operator + value + " ORDER BY " + mOrder;
 
         // 2. build query
@@ -236,7 +239,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         args.put(attrToChange, newValue);
 
         // 3. updating row
-        int i = db.update(TABLE_PRODUCTS, //table
+        int i = db.update(TABLE_NAME, //table
                 args, // column/value
                 KEY_UPC + " = ?", // selections
                 new String[] { upc }); //selection args
@@ -253,11 +256,11 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         // 2. delete
-        db.delete(TABLE_PRODUCTS,
+        db.delete(TABLE_NAME,
                 KEY_POS + " = ?",
                 new String[] { String.valueOf(product.getPos()) });
 
-        String DECREMENT_POS = "UPDATE " + TABLE_PRODUCTS + " SET " +
+        String DECREMENT_POS = "UPDATE " + TABLE_NAME + " SET " +
                 KEY_POS + " = " + KEY_POS + " - 1 WHERE " + KEY_POS + " >= " + product.getPos();
 
         db.execSQL(DECREMENT_POS);
@@ -325,7 +328,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
 
         // 2. build query
         Cursor cursor =
-                db.query(TABLE_PRODUCTS, // a. table
+                db.query(TABLE_NAME, // a. table
                         new String[] {KEY_ID}, // b. column names
                         " " + KEY_POS + " = ?", // c. selections
                         new String[] { String.valueOf(pos) }, // d. selections args

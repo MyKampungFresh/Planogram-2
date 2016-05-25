@@ -31,8 +31,6 @@ public class MainActivity extends Activity {
     private int pos = 0;
     private int totalNbProd = 0;
 
-    private String mDatabaseName;
-
     private Resources res;
 
     private Planogram plano;
@@ -58,25 +56,23 @@ public class MainActivity extends Activity {
             fileName = extras.getString("fileName");
             shortFileName = extras.getString("shortFileName");
 
-            progress = ProgressDialog.show(this, getString(R.string.openPlanoMsg) + " " + shortFileName,
-                    getString(R.string.progressMsg), true);
+            if(extras.getBoolean("isANewPlano")) {
 
-            if(shortFileName != null) {
+                progress = ProgressDialog.show(this, getString(R.string.openPlanoMsg) + " " + shortFileName,
+                        getString(R.string.progressMsg), true);
+
                 pdfFile = new File(fileName);
 
                 new Thread(new Runnable() {
                     @Override
-                    public void run()
-                    {
+                    public void run() {
 
                         plano = new Planogram(pdfFile);
-                        mDatabaseName = pdfFile.toString();
                         saveInDatabase();
 
                         runOnUiThread(new Runnable() {
                             @Override
-                            public void run()
-                            {
+                            public void run() {
                                 progress.dismiss();
                                 View view = findViewById(R.id.workView);
                                 view.setVisibility(View.VISIBLE);
@@ -85,6 +81,11 @@ public class MainActivity extends Activity {
                         });
                     }
                 }).start();
+            } else {
+                Log.d("onCreateMain","Open recent file: " + extras.getString("dbFileName"));
+                plano = new Planogram();
+                plano.openDatabase(this,extras.getString("dbFileName"));
+
             }
         }
 
@@ -326,7 +327,12 @@ public class MainActivity extends Activity {
     }
 
     private void saveInDatabase() {
-        plano.saveInDatabase(this,mDatabaseName);
+
+        String databaseName = Planogram.COMP_ACRONYM + "_"
+                + plano.getDepartmentNameNorm() + "_"
+                + plano.getPlanoLength() + "_"
+                + plano.getPlanoCreationShortDate();
+        plano.saveInDatabase(this,databaseName);
     }
 
 }

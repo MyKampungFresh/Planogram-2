@@ -3,6 +3,7 @@ package course.examples.helloandroid;
 import android.content.Context;
 
 import java.io.File;
+import java.text.Normalizer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -18,10 +19,15 @@ import java.sql.*;
 
 public class Planogram {
 
+    public static final String COMP_ACRONYM = "PGM";
+
     private String mDepartmentNb;
     private String mDepartmentName;
+    private String mDepartmentNameNorm;
     private String mPlanoLength;
-    private String mShortDate;
+    private String mPlanoCreationShortDate;
+
+    private Date mPlanoCreationDate;
 
     private int mNbProducts;
     private Product[] mProducts;
@@ -30,6 +36,10 @@ public class Planogram {
     private boolean[] mIsNew;
 
     Connection dbConnection = null;
+
+    public Planogram() {
+
+    }
 
     public Planogram(File pdfFile) {
 
@@ -66,6 +76,10 @@ public class Planogram {
             mDepartmentNb = docTitleMatcher.group(1);
             mDepartmentName = docTitleMatcher.group(2);
             mPlanoLength = docTitleMatcher.group(3);
+
+            mDepartmentNameNorm = mDepartmentName.replaceAll(" ", "_");
+            mDepartmentNameNorm = Normalizer.normalize(mDepartmentNameNorm, Normalizer.Form.NFD);
+            mDepartmentNameNorm = mDepartmentNameNorm.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
         }
 
         //Matches date
@@ -74,13 +88,12 @@ public class Planogram {
         Matcher dateMatcher = datePatternObject.matcher(pdfString);
 
         if (dateMatcher.find()) {
-
             try {
                 SimpleDateFormat dateFormatInput = new SimpleDateFormat("dd-MMMM-yyyy", Locale.FRENCH);
-                Date planoCreationDate = dateFormatInput.parse(dateMatcher.group(1)
+                mPlanoCreationDate = dateFormatInput.parse(dateMatcher.group(1)
                         + "-" + dateMatcher.group(2) + "-" + dateMatcher.group(3));
                 SimpleDateFormat dateFormatOutput = new SimpleDateFormat("ddMMyy");
-                mShortDate = dateFormatOutput.format(planoCreationDate);
+                mPlanoCreationShortDate = dateFormatOutput.format(mPlanoCreationDate);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -152,6 +165,10 @@ public class Planogram {
         }
     }
 
+    public void openDatabase(Context context, String databaseName){
+        ProductDBHandler productDB = new ProductDBHandler(context,databaseName);
+    }
+
     /**
      * Find product
      *
@@ -209,12 +226,20 @@ public class Planogram {
         return mDepartmentName;
     }
 
+    public String getDepartmentNameNorm(){
+        return mDepartmentNameNorm;
+    }
+
     public String getPlanoLength(){
         return mPlanoLength;
     }
 
-    public String getShortDate(){
-        return mShortDate;
+    public Date getPlanoCreationDate(){
+        return mPlanoCreationDate;
+    }
+
+    public String getPlanoCreationShortDate(){
+        return mPlanoCreationShortDate;
     }
 
     public void productIsPlaced(int pos) {

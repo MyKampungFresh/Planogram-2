@@ -152,6 +152,7 @@ public class OpenFile extends Activity
                 intent = new Intent(OpenFile.this, MainActivity.class);
                 intent.putExtra("fileName", selectedFilePath);
                 intent.putExtra("shortFileName", selectedFileName);
+                intent.putExtra("isANewPlano", true);
                 setResult(RESULT_OK, intent);
 
                 OpenFile.this.startActivity(intent);
