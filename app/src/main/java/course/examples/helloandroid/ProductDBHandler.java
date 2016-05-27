@@ -6,12 +6,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
 import java.util.List;
 import java.util.LinkedList;
 
 public class ProductDBHandler extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
+    private final String TABLE_NAME;
 
     public static final String KEY_ID = "id";
     public static final String KEY_POS = "position";
@@ -36,7 +38,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     private int mId = 1;
     private String mOrder;
 
-    private String TABLE_NAME;
+    private SQLiteDatabase mProductDB = null;
 
     public ProductDBHandler(Context context, String databaseName) {
         super(context, databaseName, null, DATABASE_VERSION);
@@ -73,10 +75,31 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
+    public void create() {
+        mProductDB = this.getWritableDatabase();
+    }
+
+    public void open(String databasePath) {
+        mProductDB = SQLiteDatabase.openDatabase(databasePath + TABLE_NAME, null, 0);
+    }
+
+    public void close() {
+        mProductDB.close();
+    }
+
+    public boolean isOpen() {
+        return mProductDB.isOpen();
+    }
+
     public void addProduct(Product product){
-        Log.d("addProduct", product.toString());
+        //Log.d("addProduct", product.toString());
+        SQLiteDatabase db;
         // 1. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
+        if(mProductDB == null) {
+            db = this.getWritableDatabase();
+        } else {
+            db = mProductDB;
+        }
 
         // 2. create ContentValues to add key "column"/value
         ContentValues values = putValues(product);
@@ -93,9 +116,14 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     }
 
     public void insertProduct(Product product) {
-        Log.d("insertProduct", product.toString());
+        //Log.d("insertProduct", product.toString());
+        SQLiteDatabase db;
         // 1. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
+        if(mProductDB == null) {
+            db = this.getWritableDatabase();
+        } else {
+            db = mProductDB;
+        }
 
         // 2. create ContentValues to add key "column"/value
         ContentValues values = putValues(product);
@@ -118,8 +146,13 @@ public class ProductDBHandler extends SQLiteOpenHelper {
 
     public Product getProduct(int pos){
 
-        // 1. get reference to readable DB
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db;
+        // 1. get reference to writable DB
+        if(mProductDB == null) {
+            db = this.getWritableDatabase();
+        } else {
+            db = mProductDB;
+        }
 
         // 2. build query
         Cursor cursor =
@@ -157,7 +190,12 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + TABLE_NAME + " ORDER BY " + mOrder;
 
         // 2. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db;
+        if(mProductDB == null) {
+            db = this.getWritableDatabase();
+        } else {
+            db = mProductDB;
+        }
         Cursor cursor = db.rawQuery(query, null);
 
         Product product;
@@ -169,7 +207,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        Log.d("getAllProducts()", products.toString());
+        //Log.d("getAllProducts()", products.toString());
 
         cursor.close();
 
@@ -268,7 +306,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         // 3. close
         db.close();
 
-        Log.d("deleteProduct", product.toString());
+        //Log.d("deleteProduct", product.toString());
 
     }
 
@@ -294,7 +332,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         values.put(KEY_ISNEWPROD, product.isNew() ? 1 : 0);
         values.put(KEY_ISPLACED, product.isPlaced() ? 1 : 0);
 
-        Log.d("putValues",values.toString());
+        //Log.d("putValues",values.toString());
 
         return values;
     }
@@ -323,8 +361,13 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     }
 
     public int getId(int pos) {
-        // 1. get reference to readable DB
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db;
+        // 1. get reference to writable DB
+        if(mProductDB == null) {
+            db = this.getWritableDatabase();
+        } else {
+            db = mProductDB;
+        }
 
         // 2. build query
         Cursor cursor =

@@ -17,6 +17,8 @@ import org.apache.pdfbox.text.PDFTextStripperByArea;
 
 import java.sql.*;
 
+//TODO: Use ArrayList
+
 public class Planogram {
 
     public static final String COMP_ACRONYM = "PGM";
@@ -167,6 +169,9 @@ public class Planogram {
 
     public void openDatabase(Context context, String databaseName){
         ProductDBHandler productDB = new ProductDBHandler(context,databaseName);
+        productDB.open(databaseName);
+
+        mProducts = new Product[productDB.getNbProducts()];
     }
 
     /**
