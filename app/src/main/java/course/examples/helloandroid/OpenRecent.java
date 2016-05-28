@@ -22,6 +22,7 @@ public class OpenRecent extends Activity {
     private static final String EXCLUDES_FILES = "journal";
 
     private ListView mDBFileListView;
+    private String mDatabasePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +34,11 @@ public class OpenRecent extends Activity {
         mDBFileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(),
-                        "Click ListItem " + parent.getItemAtPosition(position), Toast.LENGTH_LONG).show();
 
                 Intent intent = new Intent(OpenRecent.this, MainActivity.class);
                 intent.putExtra("isANewPlano", false);
-                intent.putExtra("dbFileName",parent.getItemAtPosition(position).toString());
+                intent.putExtra("dbFileName", parent.getItemAtPosition(position).toString());
+                intent.putExtra("dbPath", mDatabasePath);
                 setResult(RESULT_OK, intent);
 
                 OpenRecent.this.startActivity(intent);
@@ -47,10 +47,10 @@ public class OpenRecent extends Activity {
     }
 
     private void showFileList() {
-        String destPath = getFilesDir().getPath();
-        destPath = destPath.substring(0, destPath.lastIndexOf("/")) + "/databases";
+        mDatabasePath = getFilesDir().getPath();
+        mDatabasePath = mDatabasePath.substring(0, mDatabasePath.lastIndexOf("/")) + "/databases/";
 
-        File dbFolder = new File(destPath);
+        File dbFolder = new File(mDatabasePath);
         File file[] = dbFolder.listFiles();
         ArrayList<String> fileList = new ArrayList<>();
         for (File aFile : file) {

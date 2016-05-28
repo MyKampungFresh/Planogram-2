@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.LinkedList;
 
 public class ProductDBHandler extends SQLiteOpenHelper {
 
@@ -109,9 +109,6 @@ public class ProductDBHandler extends SQLiteOpenHelper {
                 null, //nullColumnHack
                 values); // key/value -> keys = column names/ values = column values
 
-        // 4. close
-        db.close();
-
         mId++;
     }
 
@@ -183,8 +180,8 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         return product;
     }
 
-    public List<Product> getAllProducts() {
-        List<Product> products = new LinkedList<>();
+    public ArrayList<Product> getAllProducts() {
+        ArrayList<Product> products = new ArrayList<>();
 
         // 1. build the query
         String query = "SELECT * FROM " + TABLE_NAME + " ORDER BY " + mOrder;
@@ -214,7 +211,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         return products;
     }
 
-    public List<Product> findProduct(String column, String operator, String value) {
+    public ArrayList<Product> findProduct(String column, String operator, String value) {
 
         // 1. get reference to readable DB
         SQLiteDatabase db = this.getReadableDatabase();
@@ -247,7 +244,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         // 2. build query
         Cursor cursor = db.rawQuery(query, null);
 
-        List<Product> products = new LinkedList<>();
+        ArrayList<Product> products = new ArrayList<>();
         // 3. if we got results get the first one
         Product product;
         if (cursor.moveToFirst()) {
@@ -357,7 +354,22 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     }
 
     public int getNbProducts() {
-        return mId - 1;
+
+        SQLiteDatabase db;
+
+        String countQuery = "SELECT  * FROM " + TABLE_NAME;
+        if(mProductDB == null) {
+            db = this.getWritableDatabase();
+        } else {
+            db = mProductDB;
+        }
+
+        Cursor cursor = db.rawQuery(countQuery, null);
+
+        int nbProducts = cursor.getCount();
+        cursor.close();
+
+        return nbProducts;
     }
 
     public int getId(int pos) {
@@ -394,5 +406,6 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     public void sort(String column, String direction){
         mOrder = column + " " + direction;
     }
+
 
 }

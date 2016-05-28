@@ -20,8 +20,6 @@ public class Product {
     private boolean isNewProd = false;
     private boolean mIsPlaced = false;
 
-    private int[] mLoc;
-
     //TODO Change those attributes in arrays
     private int mPos;
     private int nbFacing;
@@ -32,7 +30,7 @@ public class Product {
     String upc;
     String description;
     String format;
-    Expiration mExp;
+    Expiration mExp = null;
 
     public Product() {
     }
@@ -177,10 +175,10 @@ public class Product {
 
     public boolean isExpired(){
 
-        if(mExp == null)
-            return false;
-        else
+        if(mExp.isValid())
             return true;
+        else
+            return false;
     }
 
     public String toString() {

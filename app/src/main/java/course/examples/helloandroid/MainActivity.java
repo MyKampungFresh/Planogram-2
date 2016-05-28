@@ -84,8 +84,11 @@ public class MainActivity extends Activity {
             } else {
                 Log.d("onCreateMain","Open recent file: " + extras.getString("dbFileName"));
                 plano = new Planogram();
-                plano.openDatabase(this,extras.getString("dbFileName"));
+                plano.openDatabase(this,extras.getString("dbFileName"),extras.getString("dbPath"));
 
+                View view = findViewById(R.id.workView);
+                view.setVisibility(View.VISIBLE);
+                refreshView();
             }
         }
 
@@ -213,72 +216,72 @@ public class MainActivity extends Activity {
 
         totalNbProd = plano.getNbProducts();
 
-            // Description
-            TextView prodDesc = (TextView) findViewById(R.id.prodDescription);
-            txtProdDesc = res.getString(R.string.desc, currentProd.getDesc());
-            prodDesc.setText(txtProdDesc);
+        // Description
+        TextView prodDesc = (TextView) findViewById(R.id.prodDescription);
+        txtProdDesc = res.getString(R.string.desc, currentProd.getDesc());
+        prodDesc.setText(txtProdDesc);
 
-            // Format
-            TextView prodFormat = (TextView) findViewById(R.id.prodFormat);
-            txtProdFormat = res.getString(R.string.format, currentProd.getFormat());
-            prodFormat.setText(txtProdFormat);
+        // Format
+        TextView prodFormat = (TextView) findViewById(R.id.prodFormat);
+        txtProdFormat = res.getString(R.string.format, currentProd.getFormat());
+        prodFormat.setText(txtProdFormat);
 
-            // Draw barcode
-            FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
-            Barcode dv = new Barcode(this, currentProd.getUpc());
-            frameBarcode.addView(dv);
+        // Draw barcode
+        FrameLayout frameBarcode = (FrameLayout) findViewById(R.id.frameBarcode);
+        Barcode dv = new Barcode(this, currentProd.getUpc());
+        frameBarcode.addView(dv);
 
-            // Show barcode data
-            TextView UPC = (TextView) findViewById(R.id.UPC);
-            txtUPC = res.getString(R.string.upc, currentProd.getUpc());
-            UPC.setText(txtUPC);
+        // Show barcode data
+        TextView UPC = (TextView) findViewById(R.id.UPC);
+        txtUPC = res.getString(R.string.upc, currentProd.getUpc());
+        UPC.setText(txtUPC);
 
-            // Facing
-            TextView nbFacing = (TextView) findViewById(R.id.nbFacing);
-            txtNbFacing = res.getString(R.string.nbFacing, currentProd.getNbFacing());
-            nbFacing.setText(txtNbFacing);
+        // Facing
+        TextView nbFacing = (TextView) findViewById(R.id.nbFacing);
+        txtNbFacing = res.getString(R.string.nbFacing, currentProd.getNbFacing());
+        nbFacing.setText(txtNbFacing);
 
-            // Expiration
-            Button btnExp = (Button) findViewById(R.id.btnExpiration);
-            if (plano.getProduct(pos).isExpired()) {
-                Expiration exp = plano.getProduct(pos).getExpiration();
+        // Expiration
+        Button btnExp = (Button) findViewById(R.id.btnExpiration);
+        if (plano.getProduct(pos).isExpired()) {
+            Expiration exp = plano.getProduct(pos).getExpiration();
 
-                String text = res.getString(R.string.setExpiration,
-                        exp.getNbExpiring(),
-                        exp.getNbTotal(),
-                        exp.getDateStr());
-                btnExp.setText(text);
-            } else {
-                btnExp.setText("Expiration");
-            }
+            String text = res.getString(R.string.setExpiration,
+                    exp.getNbExpiring(),
+                    exp.getNbTotal(),
+                    exp.getDateStr());
+            btnExp.setText(text);
+        } else {
+            btnExp.setText("Expiration");
+        }
 
-            // Pos
-            txtLoc = res.getString(R.string.setLoc, pos + 1, totalNbProd);
-            ((TextView) findViewById(R.id.loc)).setText(txtLoc);
+        // Pos
+        txtLoc = res.getString(R.string.setLoc, pos + 1, totalNbProd);
+        ((TextView) findViewById(R.id.loc)).setText(txtLoc);
 
-            // Shelf height
-            txtShelfHeight = currentProd.getShelfNb() + " - " +
-                    res.getString(R.string.shelfHeight, currentProd.getShelfHeight());
-            ((TextView) findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
+        // Shelf height
+        txtShelfHeight = currentProd.getShelfNb() + " - " +
+                res.getString(R.string.shelfHeight, currentProd.getShelfHeight());
+        ((TextView) findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
 
-            // Is product has been placed?
-            FrameLayout frameProdDesc = (FrameLayout) findViewById(R.id.frameProdDesc);
-            ImageView imgCheck = (ImageView) findViewById(R.id.imgCheck);
-            if(plano.isProductPlaced(pos)) {
-                frameProdDesc.setBackgroundColor(0xFF008000);
-                imgCheck.setVisibility(View.VISIBLE);
-            } else {
-                frameProdDesc.setBackgroundColor(Color.TRANSPARENT);
-                imgCheck.setVisibility(View.INVISIBLE);
-            }
+        // Is product has been placed?
+        FrameLayout frameProdDesc = (FrameLayout) findViewById(R.id.frameProdDesc);
+        ImageView imgCheck = (ImageView) findViewById(R.id.imgCheck);
+        if (plano.isProductPlaced(pos)) {
+            frameProdDesc.setBackgroundColor(0xFF008000);
+            imgCheck.setVisibility(View.VISIBLE);
+        } else {
+            frameProdDesc.setBackgroundColor(Color.TRANSPARENT);
+            imgCheck.setVisibility(View.INVISIBLE);
+        }
 
-            // Is product new?
-            CheckBox chkNewProd = (CheckBox) findViewById(R.id.newProd);
-            if(plano.isProductNew(pos)) {
-                chkNewProd.setChecked(true);
-            } else {
-                chkNewProd.setChecked(false);
-            }
+        // Is product new?
+        CheckBox chkNewProd = (CheckBox) findViewById(R.id.newProd);
+        if (plano.isProductNew(pos)) {
+            chkNewProd.setChecked(true);
+        } else {
+            chkNewProd.setChecked(false);
+        }
 
     }
 

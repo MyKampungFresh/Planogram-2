@@ -1,6 +1,7 @@
 package course.examples.helloandroid;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.File;
 import java.text.Normalizer;
@@ -17,8 +18,6 @@ import org.apache.pdfbox.text.PDFTextStripperByArea;
 
 import java.sql.*;
 
-//TODO: Use ArrayList
-
 public class Planogram {
 
     public static final String COMP_ACRONYM = "PGM";
@@ -32,15 +31,13 @@ public class Planogram {
     private Date mPlanoCreationDate;
 
     private int mNbProducts;
-    private Product[] mProducts;
+
+    private ArrayList<Product> mProducts;
 
     private boolean[] mIsPlaced;
     private boolean[] mIsNew;
 
-    Connection dbConnection = null;
-
     public Planogram() {
-
     }
 
     public Planogram(File pdfFile) {
@@ -111,8 +108,7 @@ public class Planogram {
         while (nbProductsMatcher.find())
             mNbProducts++;
 
-        // Initialize the array for the products
-        mProducts = new Product[mNbProducts];
+        mProducts = new ArrayList<>(mNbProducts);
 
         String[] lines = pdfString.split(System.getProperty("line.separator"));
 
@@ -134,12 +130,12 @@ public class Planogram {
             Matcher prodMatcher = prodPatternObject.matcher(currentLine);
             if (prodMatcher.find()) {
 
-                mProducts[i] = new Product(i,prodMatcher.group(2),
+                mProducts.add(new Product(i,prodMatcher.group(2),
                         prodMatcher.group(3),
                         prodMatcher.group(5),
                         prodMatcher.group(6),
                         Integer.parseInt(prodMatcher.group(7)),
-                        shelfNumber,shelfHeight,false);
+                        shelfNumber,shelfHeight,false));
 
                 i++;
 
@@ -163,15 +159,33 @@ public class Planogram {
         ProductDBHandler mProductDB = new ProductDBHandler(context,databaseName);
 
         for(int i = 0; i < mNbProducts; i++) {
-            mProductDB.addProduct(mProducts[i]);
+            mProductDB.addProduct(mProducts.get(i));
         }
     }
 
-    public void openDatabase(Context context, String databaseName){
+    public void openDatabase(Context context, String databaseName, String databasePath){
         ProductDBHandler productDB = new ProductDBHandler(context,databaseName);
-        productDB.open(databaseName);
+        productDB.open(databasePath);
 
-        mProducts = new Product[productDB.getNbProducts()];
+        mNbProducts = productDB.getNbProducts();
+
+        mProducts = new ArrayList<>(mNbProducts);
+        mProducts = productDB.getAllProducts();
+
+        Log.d("OpenDatabase","mProducts length = " + mProducts.size());
+        Log.d("OpenDatabase","Nb of products = " + mNbProducts);
+
+        mIsPlaced = new boolean[mNbProducts];
+        mIsNew = new boolean[mNbProducts];
+
+        for(int i = 0; i < mNbProducts; i++) {
+            mIsPlaced[i] = mProducts.get(i).isPlaced();
+            mIsNew[i] = mProducts.get(i).isNew();
+        }
+
+        Log.d("OpenDatabase","mIsPlaced length = " + mIsPlaced.length);
+        Log.d("OpenDatabase","Expiration of first prod = "
+                + "\"" + mProducts.get(0).getExpiration().getExpCode() + "\"");
     }
 
     /**
@@ -197,7 +211,6 @@ public class Planogram {
      **/
     public void insertProduct() {
 
-
     }
 
     public void show() {
@@ -205,17 +218,17 @@ public class Planogram {
 
     public void setNewProdAtPos(int position, boolean isNewProd){
 
-        mProducts[position].setIsNewProd(isNewProd);
+        mProducts.get(position).setIsNewProd(isNewProd);
     }
 
     public void setExpirationAtPos(int position, Expiration exp){
 
-        mProducts[position].setExpiration(exp);
+        mProducts.get(position).setExpiration(exp);
     }
 
     public Product getProduct(int position){
 
-        return mProducts[position];
+        return mProducts.get(position);
     }
 
     public int getNbProducts(){
