@@ -155,4 +155,11 @@
 
     </FrameLayout>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/find"
+        android:id="@+id/btnFind"
+        android:onClick="find" />
+
 </LinearLayout>

@@ -97,7 +97,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
 
         mProductDB.insert(TABLE_NAME, // table
                 null, //nullColumnHack
-                values); // key/value -> keys = column names/ values = column values
+                values); // key/value -> keys = searchColumn names/ values = searchColumn values
 
         mId++;
     }
@@ -115,7 +115,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         // 3. insert
         mProductDB.insert(TABLE_NAME, // table
                 null, //nullColumnHack
-                values); // key/value -> keys = column names/ values = column values
+                values); // key/value -> keys = searchColumn names/ values = searchColumn values
 
         // 4. close
         mProductDB.close();
@@ -127,7 +127,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
 
         Cursor cursor =
                 mProductDB.query(TABLE_NAME, // a. table
-                        COLUMNS, // b. column names
+                        COLUMNS, // b. searchColumn names
                         " " + KEY_POS + " = ?", // c. selections
                         new String[] { String.valueOf(pos) }, // d. selections args
                         null, // e. group by
@@ -232,7 +232,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
 
         // 3. updating row
         int i = mProductDB.update(TABLE_NAME, //table
-                args, // column/value
+                args, // searchColumn/value
                 KEY_UPC + " = ?", // selections
                 new String[] { upc }); //selection args
 
@@ -244,7 +244,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         ContentValues args = putValues(product,false);
 
         int i = mProductDB.update(TABLE_NAME, //table
-                args, // column/value
+                args, // searchColumn/value
                 KEY_UPC + " = ?", // selections
                 new String[] { product.getUpc() }); //selection args
 
@@ -331,7 +331,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
 
         Cursor cursor =
                 mProductDB.query(TABLE_NAME, // a. table
-                        new String[] {KEY_ID}, // b. column names
+                        new String[] {KEY_ID}, // b. searchColumn names
                         " " + KEY_POS + " = ?", // c. selections
                         new String[] { String.valueOf(pos) }, // d. selections args
                         null, // e. group by

@@ -34,6 +34,7 @@ public class MainActivity extends Activity {
     private Resources res;
 
     private Planogram plano;
+    private String mDBFilename;
 
     File pdfFile = null;
 
@@ -50,6 +51,7 @@ public class MainActivity extends Activity {
         String shortFileName;
 
         res = getResources();
+        workView = findViewById(R.id.workView);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -75,8 +77,7 @@ public class MainActivity extends Activity {
                             @Override
                             public void run() {
                                 progress.dismiss();
-                                View view = findViewById(R.id.workView);
-                                view.setVisibility(View.VISIBLE);
+                                workView.setVisibility(View.VISIBLE);
                                 refreshView();
                             }
                         });
@@ -86,15 +87,14 @@ public class MainActivity extends Activity {
                 Log.d("onCreateMain","Open recent file: " + extras.getString("dbFileName"));
                 plano = new Planogram();
                 plano.open(this,extras.getString("dbFileName"),extras.getString("dbPath"));
+                mDBFilename = extras.getString("dbFileName");
 
-                View view = findViewById(R.id.workView);
-                view.setVisibility(View.VISIBLE);
+                workView.setVisibility(View.VISIBLE);
                 refreshView();
             }
         }
 
         // Swipe gesture
-        workView = findViewById(R.id.workView);
         workView.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
             public void onSwipeLeft() {
@@ -132,10 +132,7 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_find) {
-            Intent intent = new Intent(MainActivity.this, FindActivity.class);
-            MainActivity.this.startActivity(intent);
-        } else if (id == R.id.action_settings) {
+        if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_about) {
             showAboutDialog();
@@ -200,6 +197,13 @@ public class MainActivity extends Activity {
         });
 
         builder.show();
+    }
+
+    public void find(View v) {
+
+        Intent intent = new Intent(MainActivity.this, FindActivity.class);
+        intent.putExtra("dbName",mDBFilename);
+        MainActivity.this.startActivity(intent);
     }
 
     private void refreshView(){
@@ -330,11 +334,11 @@ public class MainActivity extends Activity {
 
     private void save() {
 
-        String databaseName = Planogram.COMP_ACRONYM + "_"
+        mDBFilename = Planogram.COMP_ACRONYM + "_"
                 + plano.getDepartmentNameNorm() + "_"
                 + plano.getPlanoLength() + "_"
                 + plano.getPlanoCreationShortDate();
-        plano.save(this,databaseName);
+        plano.save(this,mDBFilename);
     }
 
 }
