@@ -32,6 +32,8 @@ public class Product {
     String format;
     Expiration mExp = null;
 
+    boolean mIsExpiring = false;
+
     public Product() {
     }
 
@@ -69,6 +71,8 @@ public class Product {
         this.shelfHeight = shelfHeight;
         this.isNewProd = isNewProd;
         mExp = exp;
+
+        mIsExpiring = true;
     }
 
     public Product(int pos, String idNb, String upc, String description, String format, int nbFacing) {
@@ -126,6 +130,7 @@ public class Product {
 
     public void setExpiration(Expiration exp) {
         mExp = exp;
+        mIsExpiring = true;
     }
 
     // get product attributes
@@ -174,11 +179,7 @@ public class Product {
     }
 
     public boolean isExpired(){
-
-        if(mExp.isValid())
-            return true;
-        else
-            return false;
+        return mIsExpiring;
     }
 
     public String toString() {

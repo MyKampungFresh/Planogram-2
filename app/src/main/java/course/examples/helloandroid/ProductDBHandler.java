@@ -92,20 +92,10 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     }
 
     public void addProduct(Product product){
-        //Log.d("addProduct", product.toString());
-        SQLiteDatabase db;
-        // 1. get reference to writable DB
-        if(mProductDB == null) {
-            db = this.getWritableDatabase();
-        } else {
-            db = mProductDB;
-        }
 
-        // 2. create ContentValues to add key "column"/value
-        ContentValues values = putValues(product);
+        ContentValues values = putValues(product,true);
 
-        // 3. insert
-        db.insert(TABLE_NAME, // table
+        mProductDB.insert(TABLE_NAME, // table
                 null, //nullColumnHack
                 values); // key/value -> keys = column names/ values = column values
 
@@ -114,46 +104,29 @@ public class ProductDBHandler extends SQLiteOpenHelper {
 
     public void insertProduct(Product product) {
         //Log.d("insertProduct", product.toString());
-        SQLiteDatabase db;
-        // 1. get reference to writable DB
-        if(mProductDB == null) {
-            db = this.getWritableDatabase();
-        } else {
-            db = mProductDB;
-        }
 
-        // 2. create ContentValues to add key "column"/value
-        ContentValues values = putValues(product);
+        ContentValues values = putValues(product,true);
 
         String INCREMENT_POS = "UPDATE " + TABLE_NAME + " SET " +
                 KEY_POS + " = " + KEY_POS + " + 1 WHERE " + KEY_POS + " >= " + product.getPos();
 
-        db.execSQL(INCREMENT_POS);
+        mProductDB.execSQL(INCREMENT_POS);
 
         // 3. insert
-        db.insert(TABLE_NAME, // table
+        mProductDB.insert(TABLE_NAME, // table
                 null, //nullColumnHack
                 values); // key/value -> keys = column names/ values = column values
 
         // 4. close
-        db.close();
+        mProductDB.close();
 
         mId++;
     }
 
     public Product getProduct(int pos){
 
-        SQLiteDatabase db;
-        // 1. get reference to writable DB
-        if(mProductDB == null) {
-            db = this.getWritableDatabase();
-        } else {
-            db = mProductDB;
-        }
-
-        // 2. build query
         Cursor cursor =
-                db.query(TABLE_NAME, // a. table
+                mProductDB.query(TABLE_NAME, // a. table
                         COLUMNS, // b. column names
                         " " + KEY_POS + " = ?", // c. selections
                         new String[] { String.valueOf(pos) }, // d. selections args
@@ -164,7 +137,6 @@ public class ProductDBHandler extends SQLiteOpenHelper {
 
 
         Product product;
-        // 3. if we got results get the first one
         if (cursor.getCount() != 0) {
             cursor.moveToFirst();
 
@@ -183,17 +155,8 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     public ArrayList<Product> getAllProducts() {
         ArrayList<Product> products = new ArrayList<>();
 
-        // 1. build the query
         String query = "SELECT * FROM " + TABLE_NAME + " ORDER BY " + mOrder;
-
-        // 2. get reference to writable DB
-        SQLiteDatabase db;
-        if(mProductDB == null) {
-            db = this.getWritableDatabase();
-        } else {
-            db = mProductDB;
-        }
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = mProductDB.rawQuery(query, null);
 
         Product product;
         if (cursor.moveToFirst()) {
@@ -212,9 +175,6 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     }
 
     public ArrayList<Product> findProduct(String column, String operator, String value) {
-
-        // 1. get reference to readable DB
-        SQLiteDatabase db = this.getReadableDatabase();
 
         if(operator.equals("contains")) {
             operator = " LIKE \'%";
@@ -242,7 +202,7 @@ public class ProductDBHandler extends SQLiteOpenHelper {
                 + column + operator + value + " ORDER BY " + mOrder;
 
         // 2. build query
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = mProductDB.rawQuery(query, null);
 
         ArrayList<Product> products = new ArrayList<>();
         // 3. if we got results get the first one
@@ -262,9 +222,6 @@ public class ProductDBHandler extends SQLiteOpenHelper {
 
     public int updateProduct(String upc, String attrToChange, String newValue) {
 
-        // 1. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
-
         if (attrToChange.equals(KEY_POS)) {
             Log.d("updateProduct","To be implemented... maybe");
             return 0;
@@ -274,44 +231,50 @@ public class ProductDBHandler extends SQLiteOpenHelper {
         args.put(attrToChange, newValue);
 
         // 3. updating row
-        int i = db.update(TABLE_NAME, //table
+        int i = mProductDB.update(TABLE_NAME, //table
                 args, // column/value
                 KEY_UPC + " = ?", // selections
                 new String[] { upc }); //selection args
 
-        // 4. close
-        db.close();
+        return i;
+    }
+
+    public int updateProduct(Product product) {
+
+        ContentValues args = putValues(product,false);
+
+        int i = mProductDB.update(TABLE_NAME, //table
+                args, // column/value
+                KEY_UPC + " = ?", // selections
+                new String[] { product.getUpc() }); //selection args
 
         return i;
     }
 
     public void deleteProduct(Product product) {
 
-        // 1. get reference to writable DB
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        // 2. delete
-        db.delete(TABLE_NAME,
+        mProductDB.delete(TABLE_NAME,
                 KEY_POS + " = ?",
                 new String[] { String.valueOf(product.getPos()) });
 
         String DECREMENT_POS = "UPDATE " + TABLE_NAME + " SET " +
                 KEY_POS + " = " + KEY_POS + " - 1 WHERE " + KEY_POS + " >= " + product.getPos();
 
-        db.execSQL(DECREMENT_POS);
-
-        // 3. close
-        db.close();
+        mProductDB.execSQL(DECREMENT_POS);
 
         //Log.d("deleteProduct", product.toString());
 
     }
 
-    private ContentValues putValues(Product product) {
+    private ContentValues putValues(Product product, boolean isProdAdded) {
         ContentValues values = new ContentValues();
 
-        values.put(KEY_ID, mId);
-        values.put(KEY_POS, product.getPos());
+        // The update(product) method also use this private method. The id can't be changed and
+        // for now the position neither
+        if(isProdAdded) {
+            values.put(KEY_ID, mId);
+            values.put(KEY_POS, product.getPos());
+        }
         values.put(KEY_IDNB, product.getIdNb());
         values.put(KEY_UPC, product.getUpc());
         values.put(KEY_DESC, product.getDesc());
@@ -355,16 +318,8 @@ public class ProductDBHandler extends SQLiteOpenHelper {
 
     public int getNbProducts() {
 
-        SQLiteDatabase db;
-
         String countQuery = "SELECT  * FROM " + TABLE_NAME;
-        if(mProductDB == null) {
-            db = this.getWritableDatabase();
-        } else {
-            db = mProductDB;
-        }
-
-        Cursor cursor = db.rawQuery(countQuery, null);
+        Cursor cursor = mProductDB.rawQuery(countQuery, null);
 
         int nbProducts = cursor.getCount();
         cursor.close();
@@ -373,17 +328,9 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     }
 
     public int getId(int pos) {
-        SQLiteDatabase db;
-        // 1. get reference to writable DB
-        if(mProductDB == null) {
-            db = this.getWritableDatabase();
-        } else {
-            db = mProductDB;
-        }
 
-        // 2. build query
         Cursor cursor =
-                db.query(TABLE_NAME, // a. table
+                mProductDB.query(TABLE_NAME, // a. table
                         new String[] {KEY_ID}, // b. column names
                         " " + KEY_POS + " = ?", // c. selections
                         new String[] { String.valueOf(pos) }, // d. selections args
@@ -406,6 +353,5 @@ public class ProductDBHandler extends SQLiteOpenHelper {
     public void sort(String column, String direction){
         mOrder = column + " " + direction;
     }
-
 
 }

@@ -126,7 +126,6 @@ public class Expiration {
 
     public Date getDate(){
 
-
         DateFormat df = new SimpleDateFormat("dd/MM/y");
         String dateInString = day + "/" + month  + "/" + year;
         Date date = null;
@@ -140,9 +139,7 @@ public class Expiration {
 
     }
 
-
-    public boolean isValid()
-    {
+    public boolean isValid() {
         boolean isDateValid;
         boolean isNbExpValid;
 

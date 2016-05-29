@@ -68,7 +68,8 @@ public class MainActivity extends Activity {
                     public void run() {
 
                         plano = new Planogram(pdfFile);
-                        saveInDatabase();
+                        // First save
+                        save();
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -84,7 +85,7 @@ public class MainActivity extends Activity {
             } else {
                 Log.d("onCreateMain","Open recent file: " + extras.getString("dbFileName"));
                 plano = new Planogram();
-                plano.openDatabase(this,extras.getString("dbFileName"),extras.getString("dbPath"));
+                plano.open(this,extras.getString("dbFileName"),extras.getString("dbPath"));
 
                 View view = findViewById(R.id.workView);
                 view.setVisibility(View.VISIBLE);
@@ -246,11 +247,13 @@ public class MainActivity extends Activity {
         if (plano.getProduct(pos).isExpired()) {
             Expiration exp = plano.getProduct(pos).getExpiration();
 
-            String text = res.getString(R.string.setExpiration,
-                    exp.getNbExpiring(),
-                    exp.getNbTotal(),
-                    exp.getDateStr());
-            btnExp.setText(text);
+            if(exp.isValid()) {
+                String text = res.getString(R.string.setExpiration,
+                        exp.getNbExpiring(),
+                        exp.getNbTotal(),
+                        exp.getDateStr());
+                btnExp.setText(text);
+            }
         } else {
             btnExp.setText("Expiration");
         }
@@ -329,13 +332,13 @@ public class MainActivity extends Activity {
         builder.show();
     }
 
-    private void saveInDatabase() {
+    private void save() {
 
         String databaseName = Planogram.COMP_ACRONYM + "_"
                 + plano.getDepartmentNameNorm() + "_"
                 + plano.getPlanoLength() + "_"
                 + plano.getPlanoCreationShortDate();
-        plano.saveInDatabase(this,databaseName);
+        plano.save(this,databaseName);
     }
 
 }

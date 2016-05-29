@@ -37,6 +37,8 @@ public class Planogram {
     private boolean[] mIsPlaced;
     private boolean[] mIsNew;
 
+    private ProductDBHandler mProductDB;
+
     public Planogram() {
     }
 
@@ -154,26 +156,24 @@ public class Planogram {
         Arrays.fill(mIsNew, false);
     }
 
-    public void saveInDatabase(Context context, String databaseName){
+    public void save(Context context, String databaseName){
 
-        ProductDBHandler mProductDB = new ProductDBHandler(context,databaseName);
+        mProductDB = new ProductDBHandler(context,databaseName);
+        mProductDB.create();
 
         for(int i = 0; i < mNbProducts; i++) {
             mProductDB.addProduct(mProducts.get(i));
         }
     }
 
-    public void openDatabase(Context context, String databaseName, String databasePath){
-        ProductDBHandler productDB = new ProductDBHandler(context,databaseName);
-        productDB.open(databasePath);
+    public void open(Context context, String databaseName, String databasePath){
+        mProductDB = new ProductDBHandler(context,databaseName);
+        mProductDB.open(databasePath);
 
-        mNbProducts = productDB.getNbProducts();
+        mNbProducts = mProductDB.getNbProducts();
 
         mProducts = new ArrayList<>(mNbProducts);
-        mProducts = productDB.getAllProducts();
-
-        Log.d("OpenDatabase","mProducts length = " + mProducts.size());
-        Log.d("OpenDatabase","Nb of products = " + mNbProducts);
+        mProducts = mProductDB.getAllProducts();
 
         mIsPlaced = new boolean[mNbProducts];
         mIsNew = new boolean[mNbProducts];
@@ -183,9 +183,6 @@ public class Planogram {
             mIsNew[i] = mProducts.get(i).isNew();
         }
 
-        Log.d("OpenDatabase","mIsPlaced length = " + mIsPlaced.length);
-        Log.d("OpenDatabase","Expiration of first prod = "
-                + "\"" + mProducts.get(0).getExpiration().getExpCode() + "\"");
     }
 
     /**
@@ -213,17 +210,10 @@ public class Planogram {
 
     }
 
-    public void show() {
-    }
-
-    public void setNewProdAtPos(int position, boolean isNewProd){
-
-        mProducts.get(position).setIsNewProd(isNewProd);
-    }
-
     public void setExpirationAtPos(int position, Expiration exp){
 
         mProducts.get(position).setExpiration(exp);
+        mProductDB.updateProduct(mProducts.get(position));
     }
 
     public Product getProduct(int position){
@@ -262,6 +252,7 @@ public class Planogram {
 
     public void productIsPlaced(int pos) {
         mIsPlaced[pos] = true;
+        mProductDB.updateProduct(mProducts.get(pos).getUpc(),ProductDBHandler.KEY_ISPLACED,"1");
     }
 
     public boolean isProductPlaced(int pos) {
@@ -270,6 +261,7 @@ public class Planogram {
 
     public void productIsNew(int pos) {
         mIsNew[pos] = true;
+        mProductDB.updateProduct(mProducts.get(pos).getUpc(),ProductDBHandler.KEY_ISNEWPROD,"1");
     }
 
     public boolean isProductNew(int pos) {
