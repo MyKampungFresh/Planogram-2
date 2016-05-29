@@ -132,11 +132,11 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            Log.d("ACTION", "Settings pressed");
+        if (id == R.id.action_find) {
+            Intent intent = new Intent(MainActivity.this, FindActivity.class);
+            MainActivity.this.startActivity(intent);
+        } else if (id == R.id.action_settings) {
             return true;
-        } else if (id == R.id.action_save) {
-
         } else if (id == R.id.action_about) {
             showAboutDialog();
         }
@@ -246,14 +246,11 @@ public class MainActivity extends Activity {
         Button btnExp = (Button) findViewById(R.id.btnExpiration);
         if (plano.getProduct(pos).isExpired()) {
             Expiration exp = plano.getProduct(pos).getExpiration();
-
-            if(exp.isValid()) {
-                String text = res.getString(R.string.setExpiration,
+            String text = res.getString(R.string.setExpiration,
                         exp.getNbExpiring(),
                         exp.getNbTotal(),
                         exp.getDateStr());
-                btnExp.setText(text);
-            }
+            btnExp.setText(text);
         } else {
             btnExp.setText("Expiration");
         }
@@ -285,7 +282,6 @@ public class MainActivity extends Activity {
         } else {
             chkNewProd.setChecked(false);
         }
-
     }
 
     private void nextProduct(View v) {

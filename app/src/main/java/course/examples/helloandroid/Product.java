@@ -1,5 +1,7 @@
 package course.examples.helloandroid;
 
+import android.util.Log;
+
 /**
  * Implements a product
  *
@@ -31,8 +33,6 @@ public class Product {
     String description;
     String format;
     Expiration mExp = null;
-
-    boolean mIsExpiring = false;
 
     public Product() {
     }
@@ -71,8 +71,6 @@ public class Product {
         this.shelfHeight = shelfHeight;
         this.isNewProd = isNewProd;
         mExp = exp;
-
-        mIsExpiring = true;
     }
 
     public Product(int pos, String idNb, String upc, String description, String format, int nbFacing) {
@@ -130,7 +128,6 @@ public class Product {
 
     public void setExpiration(Expiration exp) {
         mExp = exp;
-        mIsExpiring = true;
     }
 
     // get product attributes
@@ -178,12 +175,11 @@ public class Product {
         return mExp;
     }
 
-    public boolean isExpired(){
-        return mIsExpiring;
+    public boolean isExpired() {
+        return mExp.isValid();
     }
 
     public String toString() {
         return mPos + " " + mMcKessonId + " " + upc + " " + description + " " + format + " " + nbFacing;
     }
-
 }

@@ -2,10 +2,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:HelloAndroid="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
-    <item android:id="@+id/action_save" android:title="@string/action_save"
-        android:orderInCategory="2" HelloAndroid:showAsAction="never" />
+    <item android:id="@+id/action_find" android:title="@string/action_find"
+        android:orderInCategory="1" HelloAndroid:showAsAction="never" />
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="3" HelloAndroid:showAsAction="never" />
+        android:orderInCategory="2" HelloAndroid:showAsAction="never" />
     <item android:id="@+id/action_about" android:title="@string/action_about"
-        android:orderInCategory="4" HelloAndroid:showAsAction="never" />
+        android:orderInCategory="3" HelloAndroid:showAsAction="never" />
 </menu>

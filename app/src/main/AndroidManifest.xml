@@ -22,7 +22,8 @@
             android:name=".OpenFile"
             android:permission="android.permission.READ_EXTERNAL_STORAGE" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".OpenRecent"></activity>
+        <activity android:name=".OpenRecent" />
+        <activity android:name=".FindActivity"></activity>
     </application>
 
 </manifest>
