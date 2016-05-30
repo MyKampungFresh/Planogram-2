@@ -32,27 +32,29 @@
                     android:layout_height="wrap_content"
                     android:text="Pos"
                     android:id="@+id/colPos"
-                    android:layout_column="1"
                     android:textAlignment="center"
-                    android:onClick="sort" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="McKesson Id"
-                    android:id="@+id/colMcKesson"
-                    android:textAlignment="center"
-                    android:onClick="sort" />
+                    android:onClick="sort"
+                    android:layout_gravity="center_horizontal" />
 
                 <TextView
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="McKesson Id"
+                    android:id="@+id/colMcKesson"
+                    android:textAlignment="center"
+                    android:onClick="sort"
+                    android:layout_gravity="center_horizontal" />
+
+                <TextView
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="UPC"
                     android:id="@+id/colUPC"
                     android:textAlignment="center"
-                    android:onClick="sort" />
+                    android:onClick="sort"
+                    android:layout_gravity="center_horizontal" />
 
                 <TextView
                     android:layout_width="300dp"
@@ -61,16 +63,18 @@
                     android:text="Description"
                     android:id="@+id/colDesc"
                     android:textAlignment="center"
-                    android:onClick="sort" />
+                    android:onClick="sort"
+                    android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="50dp"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="Format"
                     android:id="@+id/colFormat"
                     android:textAlignment="center"
-                    android:onClick="sort" />
+                    android:onClick="sort"
+                    android:layout_gravity="center_horizontal" />
 
                 <TextView
                     android:layout_width="75dp"
@@ -79,25 +83,29 @@
                     android:text="Nb Facing"
                     android:id="@+id/colNbFacing"
                     android:textAlignment="center"
-                    android:onClick="sort" />
+                    android:onClick="sort"
+                    android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="75dp"
                     android:layout_height="wrap_content"
-                    android:text="Is new product?"
-                    android:id="@+id/colIsNewProd" />
+                    android:text="Is new?"
+                    android:id="@+id/colIsNewProd"
+                    android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="75dp"
                     android:layout_height="wrap_content"
-                    android:text="Is prod placed?"
-                    android:id="@+id/colIsProdPlaced" />
+                    android:text="Is placed?"
+                    android:id="@+id/colIsProdPlaced"
+                    android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="75dp"
                     android:layout_height="wrap_content"
                     android:text="Expiration"
-                    android:id="@+id/colExpiration" />
+                    android:id="@+id/colExpiration"
+                    android:layout_gravity="center_horizontal" />
             </TableRow>
 
         </TableLayout>

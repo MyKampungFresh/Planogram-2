@@ -119,29 +119,41 @@ public class FindActivity extends Activity implements AdapterView.OnItemSelected
 
                 txtvPos.setText(String.valueOf(pos + 1));
                 txtvPos.setGravity(Gravity.CENTER);
+                txtvPos.setWidth(25);
                 txtvMcKId.setText(product.getIdNb());
                 txtvMcKId.setGravity(Gravity.CENTER);
+                txtvMcKId.setWidth(100);
                 txtvUpc.setText(product.getUpc());
                 txtvUpc.setGravity(Gravity.CENTER);
+                txtvUpc.setWidth(150);
                 txtvDesc.setText(product.getDesc());
                 txtvDesc.setGravity(Gravity.CENTER);
+                txtvDesc.setWidth(300);
                 txtvFormat.setText(product.getFormat());
                 txtvFormat.setGravity(Gravity.CENTER);
+                txtvFormat.setWidth(100);
                 txtvNbFacing.setText(String.valueOf(product.getNbFacing()));
                 txtvNbFacing.setGravity(Gravity.CENTER);
+                txtvNbFacing.setWidth(75);
 
                 if(product.isNew())
                     txtvIsNewProd.setText("Yes");
                 else
                     txtvIsNewProd.setText("No");
+                txtvIsNewProd.setGravity(Gravity.CENTER);
+                txtvIsNewProd.setWidth(75);
 
                 if(product.isPlaced())
                     txtvIsPlaced.setText("Yes");
                 else
                     txtvIsPlaced.setText("No");
+                txtvIsPlaced.setGravity(Gravity.CENTER);
+                txtvIsPlaced.setWidth(75);
 
                 if(product.isExpired())
                     txtvExpiration.setText(product.getExpiration().getExpCode());
+                txtvExpiration.setGravity(Gravity.CENTER);
+                txtvExpiration.setWidth(75);
 
                 row.addView(txtvPos);
                 row.addView(txtvMcKId);
