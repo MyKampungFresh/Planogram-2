@@ -51,6 +51,8 @@ public class Planogram {
 
         String pdfString = null;
 
+        Log.d("Planogram","Stripping text...");
+
         // Put the PDF in a string
         try {
             PDDocument document = null;
@@ -67,6 +69,10 @@ public class Planogram {
         } catch(Exception e) {
             e.printStackTrace();
         }
+
+        Log.d("Planogram","Finisehd stripping text");
+
+        Log.d("Planogram","Finding plano title and date...");
 
         // Pattern to match the document title
         String docTitlePattern = "Rapport par tablette\\n([0-9]{4}) - (.*)\\n([0-9]{1,2})\\s[P,p]ieds";
@@ -100,6 +106,8 @@ public class Planogram {
             }
         }
 
+        Log.d("Planogram","Finished finding plano title and date");
+
         // Pattern to match the products lines
         String prodLinePattern = "([0-9]{1,3})\\s([0-9]{6})\\s([0-9]{12})\\s(\\S+)\\s(.*)\\s([0-9]+\\sX\\s[0-9]+\\s\\w+)\\s([0-9])";
         Pattern prodPatternObject = Pattern.compile(prodLinePattern);
@@ -113,6 +121,8 @@ public class Planogram {
         mProducts = new ArrayList<>(mNbProducts);
 
         String[] lines = pdfString.split(System.getProperty("line.separator"));
+
+        Log.d("Planogram","Finding products...");
 
         // Main loop to parse the string from the PDF
         for (String currentLine: lines) {
@@ -146,6 +156,8 @@ public class Planogram {
 
         }
         // End of main loop
+
+        Log.d("Planogram","Finished finding products");
 
         // Array for indicating if the product has been placed correctly
         mIsPlaced = new boolean[mNbProducts];

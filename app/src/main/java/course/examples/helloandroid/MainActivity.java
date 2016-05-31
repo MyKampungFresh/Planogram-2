@@ -70,6 +70,15 @@ public class MainActivity extends Activity {
                     public void run() {
 
                         plano = new Planogram(pdfFile);
+                        //TODO this --\/
+                        //Stripping pdf text is what takes more time...
+                        //plano.getTitle();
+                        //if(planoTitle is not in list of db)
+                        //  create new thread
+                        //  save()
+                        //else
+                        //  show dialog
+                        //      "Plano already exist. Do you want to open it?"
                         // First save
                         save();
 

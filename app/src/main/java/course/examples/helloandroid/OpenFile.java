@@ -58,8 +58,6 @@ public class OpenFile extends Activity
         context = getApplicationContext();
         activity = this;
 
-        //requestPermission();
-
         try {
             /* Initializing Widgets */
             LvList = (ListView) findViewById(R.id.LvList);
@@ -124,9 +122,8 @@ public class OpenFile extends Activity
             listItems.add(files.get(i));
         }
 
-        adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1,
-                listItems);
+        adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1,listItems);
         adapter.notifyDataSetChanged();
 
         LvList.setAdapter(adapter);
