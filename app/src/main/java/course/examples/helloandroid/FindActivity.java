@@ -16,6 +16,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: MainActivity uses Planogram class to access the database via ProductDBHandler. Find a way to do the same!
+
 public class FindActivity extends Activity implements AdapterView.OnItemSelectedListener{
 
     ProductDBHandler mProductDB;

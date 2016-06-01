@@ -14,8 +14,8 @@
     <string name="upc">%1$s</string>
     <string name="setLoc">%1$d/%2$d</string>>
     <string name="format">%1$s</string>
-    <string name="nbFacing">%1$d</string>
-    <string name="shelfHeight">%1$d\"</string>
+    <string name="nbFacing">%1$d facing</string>
+    <string name="shelf">%1$d\"</string>
     <string name="desc">%1$s</string>
     <string name="expiration">Expiration</string>
     <string name="setExpirationTitle">Set expiration</string>

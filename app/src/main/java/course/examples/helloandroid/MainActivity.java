@@ -21,6 +21,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,15 +71,7 @@ public class MainActivity extends Activity {
                     public void run() {
 
                         plano = new Planogram(pdfFile);
-                        //TODO this --\/
-                        //Stripping pdf text is what takes more time...
-                        //plano.getTitle();
-                        //if(planoTitle is not in list of db)
-                        //  create new thread
-                        //  save()
-                        //else
-                        //  show dialog
-                        //      "Plano already exist. Do you want to open it?"
+
                         // First save
                         save();
 
@@ -103,6 +96,7 @@ public class MainActivity extends Activity {
             }
         }
 
+
         // Swipe gesture
         workView.setOnTouchListener(new OnSwipeTouchListener(this) {
             @Override
@@ -125,6 +119,39 @@ public class MainActivity extends Activity {
         });
 
         addListenerProductIsNew();
+
+        // Seekbar
+        SeekBar seekPos = (SeekBar) findViewById(R.id.seekPos);
+        seekPos.setMax(totalNbProd - 1);
+
+        seekPos.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int positionSought = 0;
+            String txtLoc;
+            String txtShelf;
+
+            Product currentProd;
+
+            public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser){
+                positionSought = position + 1;
+                currentProd = plano.getProduct(position);
+
+                txtLoc = res.getString(R.string.setLoc, positionSought, totalNbProd);
+                ((TextView) findViewById(R.id.loc)).setText(txtLoc);
+
+                txtShelf = currentProd.getShelfNb() + " - " +
+                        res.getString(R.string.shelf, currentProd.getShelfHeight());
+                ((TextView) findViewById(R.id.shelf)).setText(txtShelf);
+            }
+
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                pos = positionSought - 1;
+                refreshView();
+            }
+        });
     }
 
     @Override
@@ -164,7 +191,6 @@ public class MainActivity extends Activity {
                 }
             }
         });
-
     }
 
     public void setExpiration(View v) {
@@ -265,7 +291,7 @@ public class MainActivity extends Activity {
                         exp.getDateStr());
             btnExp.setText(text);
         } else {
-            btnExp.setText("Expiration");
+            btnExp.setText(res.getString(R.string.expiration));
         }
 
         // Pos
@@ -274,8 +300,8 @@ public class MainActivity extends Activity {
 
         // Shelf height
         txtShelfHeight = currentProd.getShelfNb() + " - " +
-                res.getString(R.string.shelfHeight, currentProd.getShelfHeight());
-        ((TextView) findViewById(R.id.shelfHeight)).setText(txtShelfHeight);
+                res.getString(R.string.shelf, currentProd.getShelfHeight());
+        ((TextView) findViewById(R.id.shelf)).setText(txtShelfHeight);
 
         // Is product has been placed?
         FrameLayout frameProdDesc = (FrameLayout) findViewById(R.id.frameProdDesc);

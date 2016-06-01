@@ -17,12 +17,6 @@
     android:focusableInTouchMode="true"
     android:baselineAligned="false">
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.10" />
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -92,16 +86,53 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/nbFacing"
         android:id="@+id/nbFacing"
         android:layout_gravity="center_horizontal"
         android:textColor="@android:color/black" />
 
     <Space
-        android:layout_width="324dp"
-        android:layout_height="25dp"
-        android:layout_gravity="center_horizontal" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.10" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.25">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/setLoc"
+            android:id="@+id/loc"
+            android:layout_gravity="center_horizontal|top" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/shelf"
+            android:id="@+id/shelf"
+            android:layout_gravity="center_horizontal|bottom" />
+
+        <SeekBar
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekPos"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="0.10" />
 
     <Button
         android:layout_width="wrap_content"
@@ -110,13 +141,6 @@
         android:id="@+id/btnExpiration"
         android:layout_gravity="center_horizontal"
         android:onClick="setExpiration" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.20"
-        android:id="@+id/emptySpace" />
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -129,37 +153,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.20" />
+        android:layout_weight="0.15" />
 
-    <FrameLayout
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="0.17">
+        android:layout_height="wrap_content">
 
-        <TextView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/setLoc"
-            android:id="@+id/loc"
-            android:layout_gravity="center_horizontal|top" />
+            android:text="@string/find"
+            android:id="@+id/btnFind"
+            android:onClick="find" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/shelfHeight"
-            android:id="@+id/shelfHeight"
-            android:layout_gravity="center_horizontal|bottom" />
-
-    </FrameLayout>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/find"
-        android:id="@+id/btnFind"
-        android:onClick="find" />
+    </LinearLayout>
 
 </LinearLayout>
