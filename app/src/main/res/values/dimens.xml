@@ -2,4 +2,15 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Columns widths for the table in the Find activity -->
+    <dimen name="tblTitles_pos_col">25dp</dimen>
+    <dimen name="tblTitles_McKId_col">100dp</dimen>
+    <dimen name="tblTitles_upc_col">150dp</dimen>
+    <dimen name="tblTitles_desc_col">300dp</dimen>
+    <dimen name="tblTitles_format_col">100dp</dimen>
+    <dimen name="tblTitles_nbFacing_col">75dp</dimen>
+    <dimen name="tblTitles_newProd_col">75dp</dimen>
+    <dimen name="tblTitles_isProdPlaced_col">75dp</dimen>
+    <dimen name="tblTitles_expiration_col">75dp</dimen>
 </resources>

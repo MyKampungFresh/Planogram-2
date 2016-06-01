@@ -30,7 +30,7 @@ public class FindActivity extends Activity implements AdapterView.OnItemSelected
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find);
 
-        tlSearchResults = (TableLayout) findViewById(R.id.maintable);
+        tlSearchResults = (TableLayout) findViewById(R.id.tblResults);
 
         String dbFilename = "";
 
@@ -98,11 +98,15 @@ public class FindActivity extends Activity implements AdapterView.OnItemSelected
     private void refreshTable(List<Product> products) {
 
         int childCount = tlSearchResults.getChildCount();
-        if (childCount > 1)
-            tlSearchResults.removeViews(1, childCount - 1);
+        if (childCount > 0)
+            tlSearchResults.removeViews(0, childCount);
+
+        int bla = (int) getResources().getDimension(R.dimen.tblTitles_pos_col);
+        Log.d("refreshTable","bla = " + bla);
+        Log.d("refreshTable","dpToPixels = " + dpToPixels(25));
 
         if (products.get(0) != null) {
-            int i = 1;
+            int i = 0;
 
             for (Product product : products) {
                 TableRow row = new TableRow(this);
@@ -121,41 +125,41 @@ public class FindActivity extends Activity implements AdapterView.OnItemSelected
 
                 txtvPos.setText(String.valueOf(pos + 1));
                 txtvPos.setGravity(Gravity.CENTER);
-                txtvPos.setWidth(25);
+                txtvPos.setWidth((int) getResources().getDimension(R.dimen.tblTitles_pos_col));
                 txtvMcKId.setText(product.getIdNb());
                 txtvMcKId.setGravity(Gravity.CENTER);
-                txtvMcKId.setWidth(100);
+                txtvMcKId.setWidth((int) getResources().getDimension(R.dimen.tblTitles_McKId_col));
                 txtvUpc.setText(product.getUpc());
                 txtvUpc.setGravity(Gravity.CENTER);
-                txtvUpc.setWidth(150);
+                txtvUpc.setWidth((int) getResources().getDimension(R.dimen.tblTitles_upc_col));
                 txtvDesc.setText(product.getDesc());
                 txtvDesc.setGravity(Gravity.CENTER);
-                txtvDesc.setWidth(300);
+                txtvDesc.setWidth((int) getResources().getDimension(R.dimen.tblTitles_desc_col));
                 txtvFormat.setText(product.getFormat());
                 txtvFormat.setGravity(Gravity.CENTER);
-                txtvFormat.setWidth(100);
+                txtvFormat.setWidth((int) getResources().getDimension(R.dimen.tblTitles_format_col));
                 txtvNbFacing.setText(String.valueOf(product.getNbFacing()));
                 txtvNbFacing.setGravity(Gravity.CENTER);
-                txtvNbFacing.setWidth(75);
+                txtvNbFacing.setWidth((int) getResources().getDimension(R.dimen.tblTitles_nbFacing_col));
 
                 if(product.isNew())
                     txtvIsNewProd.setText("Yes");
                 else
                     txtvIsNewProd.setText("No");
                 txtvIsNewProd.setGravity(Gravity.CENTER);
-                txtvIsNewProd.setWidth(75);
+                txtvIsNewProd.setWidth((int) getResources().getDimension(R.dimen.tblTitles_newProd_col));
 
                 if(product.isPlaced())
                     txtvIsPlaced.setText("Yes");
                 else
                     txtvIsPlaced.setText("No");
                 txtvIsPlaced.setGravity(Gravity.CENTER);
-                txtvIsPlaced.setWidth(75);
+                txtvIsPlaced.setWidth((int) getResources().getDimension(R.dimen.tblTitles_isProdPlaced_col));
 
                 if(product.isExpired())
                     txtvExpiration.setText(product.getExpiration().getExpCode());
                 txtvExpiration.setGravity(Gravity.CENTER);
-                txtvExpiration.setWidth(75);
+                txtvExpiration.setWidth((int) getResources().getDimension(R.dimen.tblTitles_expiration_col));
 
                 row.addView(txtvPos);
                 row.addView(txtvMcKId);
@@ -238,6 +242,12 @@ public class FindActivity extends Activity implements AdapterView.OnItemSelected
 
         int childCount = tlSearchResults.getChildCount();
         if (childCount > 1)
-            tlSearchResults.removeViews(1, childCount - 1);
+            tlSearchResults.removeViews(0, childCount);
+    }
+
+    private int dpToPixels(int dp) {
+
+        final float scale = this.getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
     }
 }

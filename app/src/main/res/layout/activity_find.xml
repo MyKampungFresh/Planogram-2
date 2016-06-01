@@ -21,14 +21,14 @@
             android:layout_height="300dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:id="@+id/maintable">
+            android:id="@+id/tblTitles">
 
             <TableRow
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:layout_width="25dp"
+                    android:layout_width="@dimen/tblTitles_pos_col"
                     android:layout_height="wrap_content"
                     android:text="Pos"
                     android:id="@+id/colPos"
@@ -37,7 +37,7 @@
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="@dimen/tblTitles_McKId_col"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="McKesson Id"
@@ -47,7 +47,7 @@
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="150dp"
+                    android:layout_width="@dimen/tblTitles_upc_col"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="UPC"
@@ -57,7 +57,7 @@
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="300dp"
+                    android:layout_width="@dimen/tblTitles_desc_col"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="Description"
@@ -67,7 +67,7 @@
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="@dimen/tblTitles_format_col"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="Format"
@@ -77,7 +77,7 @@
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="75dp"
+                    android:layout_width="@dimen/tblTitles_nbFacing_col"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="Nb Facing"
@@ -87,26 +87,39 @@
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="75dp"
+                    android:layout_width="@dimen/tblTitles_newProd_col"
                     android:layout_height="wrap_content"
                     android:text="Is new?"
                     android:id="@+id/colIsNewProd"
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="75dp"
+                    android:layout_width="@dimen/tblTitles_isProdPlaced_col"
                     android:layout_height="wrap_content"
                     android:text="Is placed?"
                     android:id="@+id/colIsProdPlaced"
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
-                    android:layout_width="75dp"
+                    android:layout_width="@dimen/tblTitles_expiration_col"
                     android:layout_height="wrap_content"
                     android:text="Expiration"
                     android:id="@+id/colExpiration"
                     android:layout_gravity="center_horizontal" />
+
             </TableRow>
+
+            <ScrollView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/scrollView" >
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:id="@+id/tblResults">
+                </TableLayout>
+            </ScrollView>
 
         </TableLayout>
     </HorizontalScrollView>
