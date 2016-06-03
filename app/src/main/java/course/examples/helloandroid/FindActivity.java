@@ -58,10 +58,10 @@ public class FindActivity extends Activity implements AdapterView.OnItemSelected
 
         // Spinner Drop down elements
         List<String> columns = new ArrayList<>();
-        columns.add("Position");
-        columns.add("McKesson Id");
-        columns.add("UPC");
-        columns.add("Description");
+        columns.add(getResources().getString(R.string.colPosition));
+        columns.add(getResources().getString(R.string.colMcKessonId));
+        columns.add(getResources().getString(R.string.colUPC));
+        columns.add(getResources().getString(R.string.colDescription));
 
         // Creating adapter for spinner
         ArrayAdapter<String> adptColumns = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, columns);
@@ -100,10 +100,6 @@ public class FindActivity extends Activity implements AdapterView.OnItemSelected
         int childCount = tlSearchResults.getChildCount();
         if (childCount > 0)
             tlSearchResults.removeViews(0, childCount);
-
-        int bla = (int) getResources().getDimension(R.dimen.tblTitles_pos_col);
-        Log.d("refreshTable","bla = " + bla);
-        Log.d("refreshTable","dpToPixels = " + dpToPixels(25));
 
         if (products.get(0) != null) {
             int i = 0;
@@ -183,8 +179,14 @@ public class FindActivity extends Activity implements AdapterView.OnItemSelected
 
         String value = etxtValues.getText().toString();
 
-        Log.d("findProduct","Search string : " + searchColumn
-                + " " + searchOperator + " " + value);
+        //Log.d("findProduct","Search string : " + searchColumn
+        //        + " " + searchOperator + " " + value);
+
+        //TODO: This is cumbersome...
+        if(searchColumn.equals(getResources().getString(R.string.colPosition))) {
+            int newPos =  Integer.parseInt(value) - 1;
+            value = String.valueOf(newPos);
+        }
 
         List<Product> products = mProductDB.findProduct(searchColumn, searchOperator,value);
         refreshTable(products);
@@ -245,9 +247,4 @@ public class FindActivity extends Activity implements AdapterView.OnItemSelected
             tlSearchResults.removeViews(0, childCount);
     }
 
-    private int dpToPixels(int dp) {
-
-        final float scale = this.getResources().getDisplayMetrics().density;
-        return (int) (dp * scale + 0.5f);
-    }
 }

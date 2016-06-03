@@ -35,4 +35,10 @@
     <string name="openPlanoMsg">Open planogram</string>
     <string name="progressMsg">Please wait. This could take some time.</string>
     <string name="find">Find</string>
+
+    <!-- Column names in Find activity  -->
+    <string name="colPosition">Position</string>
+    <string name="colMcKessonId">McKesson Id</string>
+    <string name="colUPC">UPC</string>
+    <string name="colDescription">Description</string>
 </resources>
