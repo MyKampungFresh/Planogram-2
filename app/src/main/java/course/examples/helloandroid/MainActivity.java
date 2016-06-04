@@ -54,6 +54,8 @@ public class MainActivity extends Activity {
         res = getResources();
         workView = findViewById(R.id.workView);
 
+        CacheFileHandler planoProgress = new CacheFileHandler(this);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             fileName = extras.getString("fileName");
