@@ -79,11 +79,9 @@ public class MainActivity extends Activity {
                                 + plano.getPlanoLength() + "_"
                                 + plano.getPlanoCreationShortDate();
 
-                        mSavedPlano.read();
-
                         if(!mSavedPlano.checkIfPlanoExists(mDBFilename)) {
                             plano.save(MainActivity.this, mDBFilename);
-                            mSavedPlano.write(mDBFilename, 0);
+                            mSavedPlano.write(mDBFilename, 0, true);
                         } else {
                             //Plano already exists... what to do now?!?!
                         }
@@ -104,7 +102,6 @@ public class MainActivity extends Activity {
                 plano.open(this,extras.getString("dbFileName"),extras.getString("dbPath"));
                 mDBFilename = extras.getString("dbFileName");
 
-                mSavedPlano.read();
                 mPos = mSavedPlano.getPlanoLastPos(mDBFilename);
 
                 workView.setVisibility(View.VISIBLE);
@@ -141,7 +138,7 @@ public class MainActivity extends Activity {
         seekPos.setMax(totalNbProd - 1);
 
         seekPos.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            int positionSought = 0;
+            int positionSought = mPos + 1;
             String txtLoc;
             String txtShelf;
 
@@ -173,9 +170,8 @@ public class MainActivity extends Activity {
     @Override
     public void onStop() {
         super.onStop();
-        Toast.makeText(getApplicationContext(),"15. onStop()", Toast.LENGTH_SHORT).show();
 
-        //mSavedPlano.
+        mSavedPlano.setPlanoLastPos(mDBFilename,mPos);
     }
 
 
