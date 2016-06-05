@@ -20,8 +20,7 @@ public class CacheFileHandler {
     private final static String SEPARATOR = ":";
     private final static String NEWLINE = System.getProperty("line.separator");
 
-    private FileWriter mCacheWriter;
-    private FileReader mCacheReader;
+    private File mCacheFile;
 
     List<String> mPlanoNames;
     List<String> mPlanoLastPos;
@@ -29,14 +28,11 @@ public class CacheFileHandler {
     public CacheFileHandler(Context context) {
 
         try {
-            File mCacheFile = new File(context.getCacheDir() + "/" + FILENAME + FILE_EXTENSION);
+            mCacheFile = new File(context.getCacheDir() + "/" + FILENAME + FILE_EXTENSION);
 
             if (!mCacheFile.exists()) {
                 mCacheFile.createNewFile();
             }
-
-            mCacheWriter = new FileWriter(mCacheFile.getAbsoluteFile(), IS_TEXT_APPENDED);
-            mCacheReader = new FileReader(mCacheFile);
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -46,9 +42,11 @@ public class CacheFileHandler {
     public void write(String dbName, int lastPos) {
 
         try {
-            mCacheWriter.write(dbName + SEPARATOR + lastPos + NEWLINE);
-            mCacheWriter.flush();
-            mCacheWriter.close();
+            FileWriter cacheWriter = new FileWriter(mCacheFile.getAbsoluteFile(), true);
+
+            cacheWriter.write(dbName + SEPARATOR + lastPos + NEWLINE);
+            cacheWriter.flush();
+            cacheWriter.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -63,7 +61,10 @@ public class CacheFileHandler {
         mPlanoLastPos = new ArrayList<>();
 
         try {
-            BufferedReader bufferedReader = new BufferedReader(mCacheReader);
+
+            FileReader cacheReader = new FileReader(mCacheFile);
+
+            BufferedReader bufferedReader = new BufferedReader(cacheReader);
 
             while ((line = bufferedReader.readLine()) != null)
             {
@@ -82,10 +83,16 @@ public class CacheFileHandler {
         return mPlanoNames.contains(planoName);
     }
 
+    //TODO....
     public void setPlanoLastPos(String planoName, int lastPos) {
 
-        int planoIndexInList = mPlanoNames.indexOf(planoName);
+        try {
+            FileWriter cacheWriter = new FileWriter(mCacheFile.getAbsoluteFile(), false);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 
+        int planoIndexInList = mPlanoNames.indexOf(planoName);
         if(planoIndexInList != -1) {
             mPlanoLastPos.set(planoIndexInList,String.valueOf(lastPos));
         }
