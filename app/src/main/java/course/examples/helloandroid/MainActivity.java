@@ -3,15 +3,12 @@ package course.examples.helloandroid;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.InputType;
-import android.text.Layout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -29,13 +26,15 @@ import java.io.File;
 
 public class MainActivity extends Activity {
 
-    private int pos = 0;
+    private int mPos = 0;
     private int totalNbProd = 0;
 
     private Resources res;
 
     private Planogram plano;
     private String mDBFilename;
+
+    private CacheFileHandler mSavedPlano;
 
     File pdfFile = null;
 
@@ -54,8 +53,9 @@ public class MainActivity extends Activity {
         res = getResources();
         workView = findViewById(R.id.workView);
 
-        CacheFileHandler planoProgress = new CacheFileHandler(this);
+        mSavedPlano = new CacheFileHandler(this);
 
+        //TODO: Find an intelligent way to check if the plano has already opened... this is ugly!
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             fileName = extras.getString("fileName");
@@ -74,12 +74,24 @@ public class MainActivity extends Activity {
 
                         plano = new Planogram(pdfFile);
 
-                        // First save
-                        save();
+                        mDBFilename = Planogram.COMP_ACRONYM + "_"
+                                + plano.getDepartmentNameNorm() + "_"
+                                + plano.getPlanoLength() + "_"
+                                + plano.getPlanoCreationShortDate();
+
+                        mSavedPlano.read();
+
+                        if(!mSavedPlano.checkIfPlanoExists(mDBFilename)) {
+                            plano.save(MainActivity.this, mDBFilename);
+                            mSavedPlano.write(mDBFilename, 0);
+                        } else {
+                            //Plano already exists... what to do now?!?!
+                        }
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+
                                 progress.dismiss();
                                 workView.setVisibility(View.VISIBLE);
                                 refreshView();
@@ -88,10 +100,12 @@ public class MainActivity extends Activity {
                     }
                 }).start();
             } else {
-                Log.d("onCreateMain","Open recent file: " + extras.getString("dbFileName"));
                 plano = new Planogram();
                 plano.open(this,extras.getString("dbFileName"),extras.getString("dbPath"));
                 mDBFilename = extras.getString("dbFileName");
+
+                mSavedPlano.read();
+                mPos = mSavedPlano.getPlanoLastPos(mDBFilename);
 
                 workView.setVisibility(View.VISIBLE);
                 refreshView();
@@ -150,11 +164,20 @@ public class MainActivity extends Activity {
             }
 
             public void onStopTrackingTouch(SeekBar seekBar) {
-                pos = positionSought - 1;
+                mPos = positionSought - 1;
                 refreshView();
             }
         });
     }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Toast.makeText(getApplicationContext(),"15. onStop()", Toast.LENGTH_SHORT).show();
+
+        //mSavedPlano.
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -189,7 +212,7 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
 
                 if (((CheckBox) v).isChecked()) {
-                    plano.productIsNew(pos);
+                    plano.productIsNew(mPos);
                 }
             }
         });
@@ -220,7 +243,7 @@ public class MainActivity extends Activity {
                             exp.getDateStr());
                     btnExp.setText(text);
 
-                    plano.setExpirationAtPos(pos, exp);
+                    plano.setExpirationAtPos(mPos, exp);
                 } else {
                     btnExp.setText(R.string.expValidityNotice);
                 }
@@ -254,7 +277,7 @@ public class MainActivity extends Activity {
 
         Product currentProd;
 
-        currentProd = plano.getProduct(pos);
+        currentProd = plano.getProduct(mPos);
 
         totalNbProd = plano.getNbProducts();
 
@@ -285,8 +308,8 @@ public class MainActivity extends Activity {
 
         // Expiration
         Button btnExp = (Button) findViewById(R.id.btnExpiration);
-        if (plano.getProduct(pos).isExpired()) {
-            Expiration exp = plano.getProduct(pos).getExpiration();
+        if (plano.getProduct(mPos).isExpired()) {
+            Expiration exp = plano.getProduct(mPos).getExpiration();
             String text = res.getString(R.string.setExpiration,
                         exp.getNbExpiring(),
                         exp.getNbTotal(),
@@ -297,7 +320,7 @@ public class MainActivity extends Activity {
         }
 
         // Pos
-        txtLoc = res.getString(R.string.setLoc, pos + 1, totalNbProd);
+        txtLoc = res.getString(R.string.setLoc, mPos + 1, totalNbProd);
         ((TextView) findViewById(R.id.loc)).setText(txtLoc);
 
         // Shelf height
@@ -308,7 +331,7 @@ public class MainActivity extends Activity {
         // Is product has been placed?
         FrameLayout frameProdDesc = (FrameLayout) findViewById(R.id.frameProdDesc);
         ImageView imgCheck = (ImageView) findViewById(R.id.imgCheck);
-        if (plano.isProductPlaced(pos)) {
+        if (plano.isProductPlaced(mPos)) {
             frameProdDesc.setBackgroundColor(0xFF008000);
             imgCheck.setVisibility(View.VISIBLE);
         } else {
@@ -318,7 +341,7 @@ public class MainActivity extends Activity {
 
         // Is product new?
         CheckBox chkNewProd = (CheckBox) findViewById(R.id.newProd);
-        if (plano.isProductNew(pos)) {
+        if (plano.isProductNew(mPos)) {
             chkNewProd.setChecked(true);
         } else {
             chkNewProd.setChecked(false);
@@ -327,23 +350,23 @@ public class MainActivity extends Activity {
 
     private void nextProduct(View v) {
 
-        if(pos + 1 < totalNbProd)
-            pos++;
+        if(mPos + 1 < totalNbProd)
+            mPos++;
 
         refreshView();
     }
 
     private void prevProduct(View v) {
 
-        if(pos >= 1)
-            pos = pos - 1;
+        if(mPos >= 1)
+            mPos = mPos - 1;
 
         refreshView();
     }
 
     private void doneProduct(View v) {
 
-        plano.productIsPlaced(pos);
+        plano.productIsPlaced(mPos);
         v.setBackgroundColor(0xFF008000);
 
         ImageView imgCheck = (ImageView) findViewById(R.id.imgCheck);
